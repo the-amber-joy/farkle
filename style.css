@@ -1,3 +1,57 @@
+:root {
+  --bg-primary: #ffffff;
+  --bg-secondary: #f7f7f7;
+  --bg-tertiary: #ececec;
+  --text-primary: #000000;
+  --text-secondary: #666666;
+  --border-color: #ccc;
+  --button-bg: #fff;
+  --button-border: #ccc;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg-primary: #1e1e1e;
+    --bg-secondary: #2d2d2d;
+    --bg-tertiary: #3a3a3a;
+    --text-primary: #e0e0e0;
+    --text-secondary: #b0b0b0;
+    --border-color: #444;
+    --button-bg: #2d2d2d;
+    --button-border: #555;
+  }
+}
+
+html[data-theme="dark"] {
+  --bg-primary: #1e1e1e;
+  --bg-secondary: #2d2d2d;
+  --bg-tertiary: #3a3a3a;
+  --text-primary: #e0e0e0;
+  --text-secondary: #b0b0b0;
+  --border-color: #444;
+  --button-bg: #2d2d2d;
+  --button-border: #555;
+}
+
+html[data-theme="light"] {
+  --bg-primary: #ffffff;
+  --bg-secondary: #f7f7f7;
+  --bg-tertiary: #ececec;
+  --text-primary: #000000;
+  --text-secondary: #666666;
+  --border-color: #ccc;
+  --button-bg: #fff;
+  --button-border: #ccc;
+}
+
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
+}
+
 #scores {
   display: flex;
   gap: 12px;
@@ -9,9 +63,9 @@
 .player-column {
   min-width: 160px;
   padding: 12px;
-  border: 1px solid #ccc;
+  border: 1px solid var(--border-color);
   border-radius: 8px;
-  background: #f7f7f7;
+  background: var(--bg-secondary);
   text-align: left;
   font-weight: 600;
 }
@@ -49,7 +103,7 @@
 }
 
 .turn-input:read-only {
-  background: #ececec;
+  background: var(--bg-tertiary);
 }
 
 .turn-actions {
@@ -59,8 +113,8 @@
 }
 
 .turn-action {
-  border: 1px solid #ccc;
-  background: #fff;
+  border: 1px solid var(--button-border);
+  background: var(--button-bg);
   border-radius: 6px;
   width: 28px;
   height: 28px;
