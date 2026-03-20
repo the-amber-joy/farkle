@@ -56,25 +56,29 @@ $(function () {
   }
 
   function saveState() {
-    const players = Array.from(
-      scorebox[0].querySelectorAll(".player-column"),
-    ).map(function (playerColumn) {
-      const playerNameElement = playerColumn.querySelector(".player-name");
-      const turns = Array.from(playerColumn.querySelectorAll(".turn-row")).map(
-        function (row) {
-          const input = row.querySelector(".turn-input");
-          return {
-            value: input ? input.value : "",
-            committed: row.dataset.committed === "true",
-          };
-        },
-      );
+    const players = scorebox
+      .find(".player-column")
+      .get()
+      .map(function (playerColumn) {
+        const $playerColumn = $(playerColumn);
+        const turns = $playerColumn
+          .find(".turn-row")
+          .get()
+          .map(function (row) {
+            const $row = $(row);
+            const inputValue = $row.find(".turn-input").val() || "";
 
-      return {
-        name: playerNameElement ? playerNameElement.textContent : "",
-        turns: turns,
-      };
-    });
+            return {
+              value: String(inputValue),
+              committed: $row.attr("data-committed") === "true",
+            };
+          });
+
+        return {
+          name: $playerColumn.find(".player-name").first().text() || "",
+          turns: turns,
+        };
+      });
 
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify({ players: players }));
@@ -187,26 +191,25 @@ $(function () {
   }
 
   function updatePlayerScore(turnsContainer, playerScore) {
-    const inputs = turnsContainer.querySelectorAll(".turn-input");
     let total = 0;
 
-    inputs.forEach(function (input) {
-      if (input.value !== "") {
-        const value = Number(input.value);
-        if (!Number.isNaN(value)) {
-          total += value;
+    $(turnsContainer)
+      .find(".turn-input")
+      .each(function () {
+        if (this.value !== "") {
+          const value = Number(this.value);
+          if (!Number.isNaN(value)) {
+            total += value;
+          }
         }
-      }
-    });
+      });
 
-    playerScore.textContent = String(total);
+    $(playerScore).text(String(total));
   }
 
   function ensureDraftRow(turnsContainer, playerScore) {
-    const rows = turnsContainer.querySelectorAll(".turn-row");
-    const hasDraft = Array.from(rows).some(function (row) {
-      return row.dataset.committed === "false";
-    });
+    const hasDraft =
+      $(turnsContainer).find('.turn-row[data-committed="false"]').length > 0;
 
     if (!hasDraft) {
       addTurnInputRow(turnsContainer, playerScore);
@@ -214,24 +217,24 @@ $(function () {
   }
 
   function getNextPlayerAvailableInput(currentTurnsContainer) {
-    const playerColumns = Array.from(
-      scorebox[0].querySelectorAll(".player-column"),
-    );
-    const currentColumn = currentTurnsContainer.closest(".player-column");
+    const $playerColumns = scorebox.find(".player-column");
+    const currentColumn = $(currentTurnsContainer).closest(".player-column")[0];
 
-    if (!currentColumn || playerColumns.length < 2) {
+    if (!currentColumn || $playerColumns.length < 2) {
       return null;
     }
 
-    const currentIndex = playerColumns.indexOf(currentColumn);
+    const currentIndex = $playerColumns.get().indexOf(currentColumn);
     if (currentIndex === -1) {
       return null;
     }
 
-    for (let offset = 1; offset < playerColumns.length; offset += 1) {
+    for (let offset = 1; offset < $playerColumns.length; offset += 1) {
       const nextColumn =
-        playerColumns[(currentIndex + offset) % playerColumns.length];
-      const nextInput = nextColumn.querySelector(".turn-input:not([readonly])");
+        $playerColumns.get()[(currentIndex + offset) % $playerColumns.length];
+      const nextInput = $(nextColumn)
+        .find(".turn-input:not([readonly])")
+        .first()[0];
 
       if (nextInput) {
         return nextInput;
@@ -283,19 +286,20 @@ $(function () {
   }
 
   function getRowContextFromInput(turnInput) {
-    const inputRow = turnInput.closest(".turn-row");
-    const turnsContainer = turnInput.closest(".turns-container");
+    const $turnInput = $(turnInput);
+    const inputRow = $turnInput.closest(".turn-row")[0];
+    const turnsContainer = $turnInput.closest(".turns-container")[0];
 
     if (!inputRow || !turnsContainer) {
       return null;
     }
 
-    const playerColumn = turnsContainer.closest(".player-column");
+    const playerColumn = $(turnsContainer).closest(".player-column")[0];
     if (!playerColumn) {
       return null;
     }
 
-    const playerScore = playerColumn.querySelector(".cumulative-score");
+    const playerScore = $(playerColumn).find(".cumulative-score").first()[0];
     if (!playerScore) {
       return null;
     }
@@ -308,7 +312,7 @@ $(function () {
   }
 
   scorebox.on("focus", ".turn-input", function () {
-    const column = this.closest(".player-column");
+    const column = $(this).closest(".player-column")[0];
     if (column) {
       column.scrollIntoView({
         behavior: "smooth",
@@ -357,7 +361,7 @@ $(function () {
     this.readOnly = true;
     context.inputRow.dataset.committed = "true";
 
-    const editButton = context.inputRow.querySelector(".turn-edit");
+    const editButton = $(context.inputRow).find(".turn-edit").first()[0];
     if (editButton) {
       editButton.disabled = false;
     }
@@ -366,13 +370,10 @@ $(function () {
       addTurnInputRow(context.turnsContainer, context.playerScore);
     }
 
-    const turnInputs = context.turnsContainer.querySelectorAll(".turn-input");
-    const newestInput = turnInputs[turnInputs.length - 1];
+    const newestInput = $(context.turnsContainer).find(".turn-input").last()[0];
 
     if (wasDraftRow && wasLastRow) {
-      const nextPlayerInput = getNextPlayerAvailableInput(
-        context.turnsContainer,
-      );
+      const nextPlayerInput = getNextPlayerAvailableInput(context.turnsContainer);
       if (nextPlayerInput) {
         nextPlayerInput.focus();
         updatePlayerScore(context.turnsContainer, context.playerScore);
@@ -389,12 +390,12 @@ $(function () {
   });
 
   scorebox.on("click", ".turn-edit", function () {
-    const inputRow = this.closest(".turn-row");
+    const inputRow = $(this).closest(".turn-row")[0];
     if (!inputRow || inputRow.dataset.committed !== "true") {
       return;
     }
 
-    const turnInput = inputRow.querySelector(".turn-input");
+    const turnInput = $(inputRow).find(".turn-input").first()[0];
     if (!turnInput) {
       return;
     }
@@ -406,15 +407,15 @@ $(function () {
   });
 
   scorebox.on("click", ".turn-delete", function () {
-    const inputRow = this.closest(".turn-row");
+    const inputRow = $(this).closest(".turn-row")[0];
     if (!inputRow) {
       return;
     }
 
-    const turnsContainer = inputRow.closest(".turns-container");
-    const playerColumn = inputRow.closest(".player-column");
+    const turnsContainer = $(inputRow).closest(".turns-container")[0];
+    const playerColumn = $(inputRow).closest(".player-column")[0];
     const playerScore = playerColumn
-      ? playerColumn.querySelector(".cumulative-score")
+      ? $(playerColumn).find(".cumulative-score").first()[0]
       : null;
 
     if (!turnsContainer || !playerScore) {
@@ -425,12 +426,9 @@ $(function () {
     updatePlayerScore(turnsContainer, playerScore);
     ensureDraftRow(turnsContainer, playerScore);
 
-    const lastRow = turnsContainer.lastElementChild;
-    if (lastRow) {
-      const lastInput = lastRow.querySelector(".turn-input");
-      if (lastInput && !lastInput.readOnly) {
-        lastInput.focus();
-      }
+    const lastInput = $(turnsContainer).find(".turn-input").last()[0];
+    if (lastInput && !lastInput.readOnly) {
+      lastInput.focus();
     }
 
     saveState();
