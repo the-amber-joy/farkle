@@ -273,6 +273,13 @@ document.addEventListener("DOMContentLoaded", function () {
     actions.appendChild(editButton);
     actions.appendChild(deleteButton);
 
+    turnInput.addEventListener("focus", function () {
+      const column = turnInput.closest(".player-column");
+      if (column) {
+        column.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+      }
+    });
+
     turnInput.addEventListener("input", function () {
       const sanitized = sanitizeTurnValue(turnInput.value);
       if (sanitized !== turnInput.value) {
