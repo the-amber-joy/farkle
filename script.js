@@ -135,40 +135,43 @@ $(function () {
   function createPlayerColumn(playerName, turnRows) {
     playerCount += 1;
 
-    const playerColumn = document.createElement("div");
-    playerColumn.className = "player-column";
-    playerColumn.id = `player${playerCount}`;
+    const playerLabel = playerName || `Player ${playerCount}`;
+    const playerColumn = $("<div>", {
+      class: "player-column",
+      id: `player${playerCount}`,
+    });
 
-    const playerNameElement = document.createElement("h2");
-    playerNameElement.className = "player-name";
-    playerNameElement.textContent = playerName || `Player ${playerCount}`;
+    const playerNameElement = $("<h2>", {
+      class: "player-name",
+      text: playerLabel,
+    });
 
-    const playerScore = document.createElement("p");
-    playerScore.className = "cumulative-score";
-    playerScore.textContent = "0";
+    const playerScore = $("<p>", {
+      class: "cumulative-score",
+      text: "0",
+    });
 
-    const turnsContainer = document.createElement("div");
-    turnsContainer.className = "turns-container";
+    const turnsContainer = $("<div>", {
+      class: "turns-container",
+    });
 
     const rowsToRestore = Array.isArray(turnRows) ? turnRows : [];
 
     if (rowsToRestore.length > 0) {
       rowsToRestore.forEach(function (row) {
-        addTurnInputRow(turnsContainer, playerScore, {
+        addTurnInputRow(turnsContainer[0], playerScore[0], {
           value: row && typeof row.value === "string" ? row.value : "",
           committed: Boolean(row && row.committed),
         });
       });
-      ensureDraftRow(turnsContainer, playerScore);
+      ensureDraftRow(turnsContainer[0], playerScore[0]);
     } else {
-      addTurnInputRow(turnsContainer, playerScore);
+      addTurnInputRow(turnsContainer[0], playerScore[0]);
     }
 
-    updatePlayerScore(turnsContainer, playerScore);
+    updatePlayerScore(turnsContainer[0], playerScore[0]);
 
-    playerColumn.appendChild(playerNameElement);
-    playerColumn.appendChild(playerScore);
-    playerColumn.appendChild(turnsContainer);
+    playerColumn.append(playerNameElement, playerScore, turnsContainer);
     scorebox.append(playerColumn);
     refreshFeatherIcons();
     saveState();
@@ -241,41 +244,41 @@ $(function () {
   function addTurnInputRow(turnsContainer, playerScore, options) {
     const rowOptions = options || {};
 
-    const inputRow = document.createElement("div");
-    inputRow.className = "turn-row";
-    inputRow.dataset.committed = rowOptions.committed ? "true" : "false";
+    const inputRow = $("<div>", {
+      class: "turn-row",
+    }).attr("data-committed", rowOptions.committed ? "true" : "false");
 
-    const turnInput = document.createElement("input");
-    turnInput.type = "search";
-    turnInput.className = "turn-input";
-    turnInput.pattern = "[0-9]{0,5}";
-    turnInput.inputMode = "numeric";
-    turnInput.maxLength = 5;
-    turnInput.placeholder = "Turn score";
-    turnInput.value = sanitizeTurnValue(String(rowOptions.value || ""));
-    turnInput.readOnly = Boolean(rowOptions.committed);
+    const turnInput = $("<input>", {
+      type: "search",
+      class: "turn-input",
+      pattern: "[0-9]{0,5}",
+      maxlength: 5,
+      placeholder: "Turn score",
+      value: sanitizeTurnValue(String(rowOptions.value || "")),
+    })
+      .attr("inputmode", "numeric")
+      .prop("readOnly", Boolean(rowOptions.committed));
 
-    const editButton = document.createElement("button");
-    editButton.type = "button";
-    editButton.className = "turn-action turn-edit";
-    editButton.setAttribute("aria-label", "Edit score");
-    editButton.innerHTML = '<i class="edit" data-feather="edit"></i>';
-    editButton.disabled = !rowOptions.committed;
+    const editButton = $("<button>", {
+      type: "button",
+      class: "turn-action turn-edit",
+      "aria-label": "Edit score",
+      html: '<i class="edit" data-feather="edit"></i>',
+    }).prop("disabled", !rowOptions.committed);
 
-    const deleteButton = document.createElement("button");
-    deleteButton.type = "button";
-    deleteButton.className = "turn-action turn-delete";
-    deleteButton.setAttribute("aria-label", "Delete score");
-    deleteButton.innerHTML = '<i class="delete" data-feather="trash-2"></i>';
+    const deleteButton = $("<button>", {
+      type: "button",
+      class: "turn-action turn-delete",
+      "aria-label": "Delete score",
+      html: '<i class="delete" data-feather="trash-2"></i>',
+    });
 
-    const actions = document.createElement("div");
-    actions.className = "turn-actions";
-    actions.appendChild(editButton);
-    actions.appendChild(deleteButton);
+    const actions = $("<div>", {
+      class: "turn-actions",
+    }).append(editButton, deleteButton);
 
-    inputRow.appendChild(turnInput);
-    inputRow.appendChild(actions);
-    turnsContainer.appendChild(inputRow);
+    inputRow.append(turnInput, actions);
+    $(turnsContainer).append(inputRow);
     refreshFeatherIcons();
   }
 
