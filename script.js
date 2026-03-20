@@ -273,103 +273,165 @@ $(function () {
     actions.appendChild(editButton);
     actions.appendChild(deleteButton);
 
-    turnInput.addEventListener("focus", function () {
-      const column = turnInput.closest(".player-column");
-      if (column) {
-        column.scrollIntoView({
-          behavior: "smooth",
-          inline: "center",
-          block: "nearest",
-        });
-      }
-    });
-
-    turnInput.addEventListener("input", function () {
-      const sanitized = sanitizeTurnValue(turnInput.value);
-      if (sanitized !== turnInput.value) {
-        turnInput.value = sanitized;
-      }
-
-      updatePlayerScore(turnsContainer, playerScore);
-      saveState();
-    });
-
-    turnInput.addEventListener("keydown", function (event) {
-      if (event.key !== "Enter") {
-        return;
-      }
-
-      event.preventDefault();
-
-      const wasDraftRow = inputRow.dataset.committed === "false";
-      const wasLastRow = inputRow.nextElementSibling === null;
-
-      const sanitized = sanitizeTurnValue(turnInput.value);
-      if (sanitized === "") {
-        return;
-      }
-
-      turnInput.value = sanitized;
-      turnInput.readOnly = true;
-      inputRow.dataset.committed = "true";
-      editButton.disabled = false;
-
-      if (inputRow.nextElementSibling === null) {
-        addTurnInputRow(turnsContainer, playerScore);
-      }
-
-      const turnInputs = turnsContainer.querySelectorAll(".turn-input");
-      const newestInput = turnInputs[turnInputs.length - 1];
-
-      if (wasDraftRow && wasLastRow) {
-        const nextPlayerInput = getNextPlayerAvailableInput(turnsContainer);
-        if (nextPlayerInput) {
-          nextPlayerInput.focus();
-          updatePlayerScore(turnsContainer, playerScore);
-          return;
-        }
-      }
-
-      if (newestInput && newestInput !== turnInput) {
-        newestInput.focus();
-      }
-
-      updatePlayerScore(turnsContainer, playerScore);
-      saveState();
-    });
-
-    editButton.addEventListener("click", function () {
-      if (inputRow.dataset.committed !== "true") {
-        return;
-      }
-
-      turnInput.readOnly = false;
-      turnInput.focus();
-      turnInput.select();
-      saveState();
-    });
-
-    deleteButton.addEventListener("click", function () {
-      inputRow.remove();
-      updatePlayerScore(turnsContainer, playerScore);
-      ensureDraftRow(turnsContainer, playerScore);
-
-      const lastRow = turnsContainer.lastElementChild;
-      if (lastRow) {
-        const lastInput = lastRow.querySelector(".turn-input");
-        if (lastInput && !lastInput.readOnly) {
-          lastInput.focus();
-        }
-      }
-
-      saveState();
-    });
-
     inputRow.appendChild(turnInput);
     inputRow.appendChild(actions);
     turnsContainer.appendChild(inputRow);
     refreshFeatherIcons();
   }
+
+  function getRowContextFromInput(turnInput) {
+    const inputRow = turnInput.closest(".turn-row");
+    const turnsContainer = turnInput.closest(".turns-container");
+
+    if (!inputRow || !turnsContainer) {
+      return null;
+    }
+
+    const playerColumn = turnsContainer.closest(".player-column");
+    if (!playerColumn) {
+      return null;
+    }
+
+    const playerScore = playerColumn.querySelector(".cumulative-score");
+    if (!playerScore) {
+      return null;
+    }
+
+    return {
+      inputRow: inputRow,
+      turnsContainer: turnsContainer,
+      playerScore: playerScore,
+    };
+  }
+
+  scorebox.on("focus", ".turn-input", function () {
+    const column = this.closest(".player-column");
+    if (column) {
+      column.scrollIntoView({
+        behavior: "smooth",
+        inline: "center",
+        block: "nearest",
+      });
+    }
+  });
+
+  scorebox.on("input", ".turn-input", function () {
+    const context = getRowContextFromInput(this);
+    if (!context) {
+      return;
+    }
+
+    const sanitized = sanitizeTurnValue(this.value);
+    if (sanitized !== this.value) {
+      this.value = sanitized;
+    }
+
+    updatePlayerScore(context.turnsContainer, context.playerScore);
+    saveState();
+  });
+
+  scorebox.on("keydown", ".turn-input", function (event) {
+    if (event.key !== "Enter") {
+      return;
+    }
+
+    const context = getRowContextFromInput(this);
+    if (!context) {
+      return;
+    }
+
+    event.preventDefault();
+
+    const wasDraftRow = context.inputRow.dataset.committed === "false";
+    const wasLastRow = context.inputRow.nextElementSibling === null;
+
+    const sanitized = sanitizeTurnValue(this.value);
+    if (sanitized === "") {
+      return;
+    }
+
+    this.value = sanitized;
+    this.readOnly = true;
+    context.inputRow.dataset.committed = "true";
+
+    const editButton = context.inputRow.querySelector(".turn-edit");
+    if (editButton) {
+      editButton.disabled = false;
+    }
+
+    if (context.inputRow.nextElementSibling === null) {
+      addTurnInputRow(context.turnsContainer, context.playerScore);
+    }
+
+    const turnInputs = context.turnsContainer.querySelectorAll(".turn-input");
+    const newestInput = turnInputs[turnInputs.length - 1];
+
+    if (wasDraftRow && wasLastRow) {
+      const nextPlayerInput = getNextPlayerAvailableInput(
+        context.turnsContainer,
+      );
+      if (nextPlayerInput) {
+        nextPlayerInput.focus();
+        updatePlayerScore(context.turnsContainer, context.playerScore);
+        return;
+      }
+    }
+
+    if (newestInput && newestInput !== this) {
+      newestInput.focus();
+    }
+
+    updatePlayerScore(context.turnsContainer, context.playerScore);
+    saveState();
+  });
+
+  scorebox.on("click", ".turn-edit", function () {
+    const inputRow = this.closest(".turn-row");
+    if (!inputRow || inputRow.dataset.committed !== "true") {
+      return;
+    }
+
+    const turnInput = inputRow.querySelector(".turn-input");
+    if (!turnInput) {
+      return;
+    }
+
+    turnInput.readOnly = false;
+    turnInput.focus();
+    turnInput.select();
+    saveState();
+  });
+
+  scorebox.on("click", ".turn-delete", function () {
+    const inputRow = this.closest(".turn-row");
+    if (!inputRow) {
+      return;
+    }
+
+    const turnsContainer = inputRow.closest(".turns-container");
+    const playerColumn = inputRow.closest(".player-column");
+    const playerScore = playerColumn
+      ? playerColumn.querySelector(".cumulative-score")
+      : null;
+
+    if (!turnsContainer || !playerScore) {
+      return;
+    }
+
+    inputRow.remove();
+    updatePlayerScore(turnsContainer, playerScore);
+    ensureDraftRow(turnsContainer, playerScore);
+
+    const lastRow = turnsContainer.lastElementChild;
+    if (lastRow) {
+      const lastInput = lastRow.querySelector(".turn-input");
+      if (lastInput && !lastInput.readOnly) {
+        lastInput.focus();
+      }
+    }
+
+    saveState();
+  });
 
   addPlayerButton.on("click", addPlayer);
   newGameButton.on("click", startNewGame);
