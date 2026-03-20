@@ -20,18 +20,19 @@ $(function () {
 
     featherFallbackRequested = true;
 
-    const fallbackScript = document.createElement("script");
-    fallbackScript.src = "https://unpkg.com/feather-icons/dist/feather.min.js";
-    fallbackScript.async = true;
-    fallbackScript.onload = function () {
-      if (typeof onReady === "function") {
-        onReady();
-      }
-    };
-    fallbackScript.onerror = function () {
-      console.error("Unable to load Feather Icons from fallback CDN");
-    };
-    document.head.appendChild(fallbackScript);
+    $("<script>", {
+      src: "https://unpkg.com/feather-icons/dist/feather.min.js",
+      async: true,
+    })
+      .on("load", function () {
+        if (typeof onReady === "function") {
+          onReady();
+        }
+      })
+      .on("error", function () {
+        console.error("Unable to load Feather Icons from fallback CDN");
+      })
+      .appendTo("head");
   }
 
   function refreshFeatherIcons(retries) {
@@ -373,7 +374,9 @@ $(function () {
     const newestInput = $(context.turnsContainer).find(".turn-input").last()[0];
 
     if (wasDraftRow && wasLastRow) {
-      const nextPlayerInput = getNextPlayerAvailableInput(context.turnsContainer);
+      const nextPlayerInput = getNextPlayerAvailableInput(
+        context.turnsContainer,
+      );
       if (nextPlayerInput) {
         nextPlayerInput.focus();
         updatePlayerScore(context.turnsContainer, context.playerScore);
