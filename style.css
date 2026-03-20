@@ -1,0 +1,83 @@
+#scores {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 16px;
+  align-items: flex-start;
+}
+
+.player-column {
+  min-width: 160px;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background: #f7f7f7;
+  text-align: left;
+  font-weight: 600;
+}
+
+.player-name {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.cumulative-score {
+  margin: 4px 0 10px;
+  font-size: 1.5rem;
+}
+
+.turns-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.turn-row {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.turn-input {
+  flex: 1;
+  min-width: 0;
+  padding: 6px 8px;
+  box-sizing: border-box;
+}
+
+.turn-input:read-only {
+  background: #ececec;
+}
+
+.turn-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.turn-action {
+  border: 1px solid #ccc;
+  background: #fff;
+  border-radius: 6px;
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  cursor: pointer;
+}
+
+.turn-action svg {
+  width: 14px;
+  height: 14px;
+}
+
+.delete {
+  color: red;
+}
+
+.edit {
+  color: #007bff;
+}
