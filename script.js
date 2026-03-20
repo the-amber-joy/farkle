@@ -4,10 +4,54 @@ document.addEventListener("DOMContentLoaded", function () {
   const scorebox = document.getElementById("scores");
   const STORAGE_KEY = "farkleScoreboardState";
   let playerCount = 0;
+  let featherFallbackRequested = false;
 
-  function refreshFeatherIcons() {
+  function loadFeatherFallback(onReady) {
+    if (window.feather && typeof window.feather.replace === "function") {
+      if (typeof onReady === "function") {
+        onReady();
+      }
+      return;
+    }
+
+    if (featherFallbackRequested) {
+      return;
+    }
+
+    featherFallbackRequested = true;
+
+    const fallbackScript = document.createElement("script");
+    fallbackScript.src = "https://unpkg.com/feather-icons/dist/feather.min.js";
+    fallbackScript.async = true;
+    fallbackScript.onload = function () {
+      if (typeof onReady === "function") {
+        onReady();
+      }
+    };
+    fallbackScript.onerror = function () {
+      console.error("Unable to load Feather Icons from fallback CDN");
+    };
+    document.head.appendChild(fallbackScript);
+  }
+
+  function refreshFeatherIcons(retries) {
+    const remainingRetries = typeof retries === "number" ? retries : 20;
+
     if (window.feather && typeof window.feather.replace === "function") {
       window.feather.replace();
+      return;
+    }
+
+    if (remainingRetries === 20) {
+      loadFeatherFallback(function () {
+        refreshFeatherIcons(10);
+      });
+    }
+
+    if (remainingRetries > 0) {
+      setTimeout(function () {
+        refreshFeatherIcons(remainingRetries - 1);
+      }, 75);
     }
   }
 
@@ -324,4 +368,7 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   refreshFeatherIcons();
+  window.addEventListener("load", function () {
+    refreshFeatherIcons();
+  });
 });
