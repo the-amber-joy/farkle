@@ -1,7 +1,7 @@
-document.addEventListener("DOMContentLoaded", function () {
-  const addPlayerButton = document.getElementById("addPlayer");
-  const newGameButton = document.getElementById("newGame");
-  const scorebox = document.getElementById("scores");
+$(function () {
+  const addPlayerButton = $("#addPlayer");
+  const newGameButton = $("#newGame");
+  const scorebox = $("#scores");
   const STORAGE_KEY = "farkleScoreboardState";
   let playerCount = 0;
   let featherFallbackRequested = false;
@@ -56,25 +56,25 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   function saveState() {
-    const players = Array.from(scorebox.querySelectorAll(".player-column")).map(
-      function (playerColumn) {
-        const playerNameElement = playerColumn.querySelector(".player-name");
-        const turns = Array.from(
-          playerColumn.querySelectorAll(".turn-row"),
-        ).map(function (row) {
+    const players = Array.from(
+      scorebox[0].querySelectorAll(".player-column"),
+    ).map(function (playerColumn) {
+      const playerNameElement = playerColumn.querySelector(".player-name");
+      const turns = Array.from(playerColumn.querySelectorAll(".turn-row")).map(
+        function (row) {
           const input = row.querySelector(".turn-input");
           return {
             value: input ? input.value : "",
             committed: row.dataset.committed === "true",
           };
-        });
+        },
+      );
 
-        return {
-          name: playerNameElement ? playerNameElement.textContent : "",
-          turns: turns,
-        };
-      },
-    );
+      return {
+        name: playerNameElement ? playerNameElement.textContent : "",
+        turns: turns,
+      };
+    });
 
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify({ players: players }));
@@ -120,7 +120,7 @@ document.addEventListener("DOMContentLoaded", function () {
       return;
     }
 
-    scorebox.innerHTML = "";
+    scorebox.empty();
     playerCount = 0;
 
     try {
@@ -169,7 +169,7 @@ document.addEventListener("DOMContentLoaded", function () {
     playerColumn.appendChild(playerNameElement);
     playerColumn.appendChild(playerScore);
     playerColumn.appendChild(turnsContainer);
-    scorebox.appendChild(playerColumn);
+    scorebox.append(playerColumn);
     refreshFeatherIcons();
     saveState();
   }
@@ -212,7 +212,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function getNextPlayerAvailableInput(currentTurnsContainer) {
     const playerColumns = Array.from(
-      scorebox.querySelectorAll(".player-column"),
+      scorebox[0].querySelectorAll(".player-column"),
     );
     const currentColumn = currentTurnsContainer.closest(".player-column");
 
@@ -276,7 +276,11 @@ document.addEventListener("DOMContentLoaded", function () {
     turnInput.addEventListener("focus", function () {
       const column = turnInput.closest(".player-column");
       if (column) {
-        column.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+        column.scrollIntoView({
+          behavior: "smooth",
+          inline: "center",
+          block: "nearest",
+        });
       }
     });
 
@@ -367,15 +371,15 @@ document.addEventListener("DOMContentLoaded", function () {
     refreshFeatherIcons();
   }
 
-  addPlayerButton.addEventListener("click", addPlayer);
-  newGameButton.addEventListener("click", startNewGame);
+  addPlayerButton.on("click", addPlayer);
+  newGameButton.on("click", startNewGame);
 
   if (!loadState()) {
     saveState();
   }
 
   refreshFeatherIcons();
-  window.addEventListener("load", function () {
+  $(window).on("load", function () {
     refreshFeatherIcons();
   });
 });
