@@ -803,44 +803,4 @@ $(function () {
   $(window).on("load", function () {
     refreshFeatherIcons();
   });
-
-  // Dark mode toggle
-  const themeToggle = $("#themeToggle");
-  const THEME_KEY = "farkleTheme";
-
-  function initializeTheme() {
-    const savedTheme = localStorage.getItem(THEME_KEY);
-    const prefersDark = window.matchMedia(
-      "(prefers-color-scheme: dark)",
-    ).matches;
-    const shouldBeDark = savedTheme ? savedTheme === "dark" : prefersDark;
-
-    if (shouldBeDark) {
-      document.documentElement.setAttribute("data-theme", "dark");
-      themeToggle.text("☀️");
-    } else {
-      document.documentElement.setAttribute("data-theme", "light");
-      themeToggle.text("🌙");
-    }
-  }
-
-  themeToggle.on("click", function () {
-    const currentTheme =
-      document.documentElement.getAttribute("data-theme") ||
-      (window.matchMedia("(prefers-color-scheme: dark)").matches
-        ? "dark"
-        : "light");
-    const newTheme = currentTheme === "dark" ? "light" : "dark";
-
-    document.documentElement.setAttribute("data-theme", newTheme);
-    localStorage.setItem(THEME_KEY, newTheme);
-
-    if (newTheme === "dark") {
-      themeToggle.text("☀️");
-    } else {
-      themeToggle.text("🌙");
-    }
-  });
-
-  initializeTheme();
 });

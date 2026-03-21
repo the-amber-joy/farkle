@@ -1,55 +1,20 @@
 :root {
-  --bg-primary: #ffffff;
-  --bg-secondary: #f7f7f7;
-  --bg-tertiary: #ececec;
-  --text-primary: #000000;
-  --text-secondary: #666666;
-  --border-color: #ccc;
-  --button-bg: #fff;
-  --button-border: #ccc;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --bg-primary: #1e1e1e;
-    --bg-secondary: #2d2d2d;
-    --bg-tertiary: #3a3a3a;
-    --text-primary: #e0e0e0;
-    --text-secondary: #b0b0b0;
-    --border-color: #444;
-    --button-bg: #2d2d2d;
-    --button-border: #555;
-  }
-}
-
-html[data-theme="dark"] {
-  --bg-primary: #1e1e1e;
-  --bg-secondary: #2d2d2d;
-  --bg-tertiary: #3a3a3a;
-  --text-primary: #e0e0e0;
-  --text-secondary: #b0b0b0;
-  --border-color: #444;
-  --button-bg: #2d2d2d;
-  --button-border: #555;
-}
-
-html[data-theme="light"] {
-  --bg-primary: #ffffff;
-  --bg-secondary: #f7f7f7;
-  --bg-tertiary: #ececec;
-  --text-primary: #000000;
-  --text-secondary: #666666;
-  --border-color: #ccc;
-  --button-bg: #fff;
-  --button-border: #ccc;
+  --bg-primary: #0d5c2e;
+  --bg-secondary: #0a4a25;
+  --bg-tertiary: #073d1e;
+  --text-primary: #f5f5dc;
+  --text-secondary: #c4c4a0;
+  --border-color: #2e8b57;
+  --button-bg: #1a7a42;
+  --button-border: #2e8b57;
+  --accent-gold: #d4af37;
+  --accent-cream: #fffdd0;
 }
 
 body {
   background-color: var(--bg-primary);
   color: var(--text-primary);
-  transition:
-    background-color 0.3s ease,
-    color 0.3s ease;
+  font-family: "Georgia", serif;
 }
 
 #scores {
@@ -78,6 +43,8 @@ body {
 .cumulative-score {
   margin: 4px 0 10px;
   font-size: 1.5rem;
+  color: var(--accent-gold);
+  font-weight: bold;
 }
 
 .turns-container {
@@ -102,6 +69,10 @@ body {
   min-width: 0;
   padding: 6px 8px;
   box-sizing: border-box;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
 }
 
 .turn-input:read-only,
@@ -138,7 +109,7 @@ body {
 }
 
 .edit {
-  color: #007bff;
+  color: var(--accent-gold);
 }
 
 /* Turn container styles */
@@ -178,6 +149,7 @@ body {
 .turn-subtotal {
   font-weight: 600;
   font-size: 1.1rem;
+  color: var(--accent-gold);
 }
 
 .turn-subtotal.farkled {
@@ -227,13 +199,13 @@ body {
 }
 
 .turn-btn-bank {
-  background: #28a745;
-  color: white;
-  border-color: #28a745;
+  background: #d4af37;
+  color: #1a1a1a;
+  border-color: #b8960c;
 }
 
 .turn-btn-bank:hover {
-  background: #218838;
+  background: #c9a227;
 }
 
 .turn-btn-farkle {
