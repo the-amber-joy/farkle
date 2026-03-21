@@ -428,7 +428,7 @@ $(function () {
     }).attr("data-committed", rowOptions.committed ? "true" : "false");
 
     const rollInput = $("<input>", {
-      type: "search",
+      type: "text",
       class: "roll-input",
       pattern: "[0-9]{0,5}",
       maxlength: 5,
@@ -436,6 +436,7 @@ $(function () {
       value: sanitizeRollValue(String(rowOptions.value || "")),
     })
       .attr("inputmode", "numeric")
+      .attr("enterkeyhint", "done")
       .prop("readOnly", Boolean(rowOptions.committed));
 
     const editButton = $("<button>", {
