@@ -385,7 +385,7 @@ $(function () {
     const farkleButton = $("<button>", {
       type: "button",
       class: "turn-btn turn-btn-farkle",
-      text: "Farkle",
+      text: "Farkle!",
     });
 
     const addRollButton = $("<button>", {
@@ -395,7 +395,7 @@ $(function () {
       "aria-label": "Add roll",
     }).hide(); // Hidden by default, shown only when no draft exists
 
-    actionsBar.append(bankButton, farkleButton, addRollButton);
+    actionsBar.append(farkleButton, bankButton, addRollButton);
 
     turnContainer.append(turnHeader, rollsContainer, actionsBar);
     $(turnsContainer).append(turnContainer);

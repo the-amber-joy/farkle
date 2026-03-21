@@ -134,6 +134,15 @@ body {
   display: none;
 }
 
+/* Hide actions bar on banked turns unless editing */
+.turn-container[data-banked="true"] .turn-actions-bar {
+  display: none;
+}
+
+.turn-container[data-banked="true"].editing .turn-actions-bar {
+  display: flex;
+}
+
 .turn-header {
   display: flex;
   justify-content: space-between;
@@ -199,13 +208,13 @@ body {
 }
 
 .turn-btn-bank {
-  background: #d4af37;
-  color: #1a1a1a;
-  border-color: #b8960c;
+  background: #28a745;
+  color: white;
+  border-color: #1e7e34;
 }
 
 .turn-btn-bank:hover {
-  background: #c9a227;
+  background: #218838;
 }
 
 .turn-btn-farkle {
@@ -227,6 +236,26 @@ body {
 
 .turn-btn-add-roll:hover {
   background: var(--bg-tertiary);
+}
+
+.turn-undo-bar {
+  display: flex;
+  margin-top: 8px;
+}
+
+.turn-container.collapsed .turn-undo-bar {
+  display: none;
+}
+
+.turn-btn-undo-farkle {
+  flex: 1;
+  background: #d4af37;
+  color: #1a1a1a;
+  border-color: #b8960c;
+}
+
+.turn-btn-undo-farkle:hover {
+  background: #c9a227;
 }
 
 .turn-banked-total {
