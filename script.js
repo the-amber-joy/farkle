@@ -63,15 +63,26 @@ $(function () {
       .map(function (playerColumn) {
         const $playerColumn = $(playerColumn);
         const turns = $playerColumn
-          .find(".turn-row")
+          .find(".turn-container")
           .get()
-          .map(function (row) {
-            const $row = $(row);
-            const inputValue = $row.find(".turn-input").val() || "";
+          .map(function (turnContainer) {
+            const $turn = $(turnContainer);
+            const rolls = $turn
+              .find(".roll-row")
+              .get()
+              .map(function (row) {
+                const $row = $(row);
+                return {
+                  value: String($row.find(".roll-input").val() || ""),
+                  committed: $row.attr("data-committed") === "true",
+                };
+              });
 
             return {
-              value: String(inputValue),
-              committed: $row.attr("data-committed") === "true",
+              rolls: rolls,
+              banked: $turn.attr("data-banked") === "true",
+              farkled: $turn.attr("data-farkled") === "true",
+              collapsed: $turn.hasClass("collapsed"),
             };
           });
 
@@ -82,10 +93,53 @@ $(function () {
       });
 
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify({ players: players }));
+      localStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify({ players: players, version: 2 }),
+      );
     } catch (error) {
       console.error("Unable to save Farkle state", error);
     }
+  }
+
+  function migrateOldState(oldState) {
+    // Convert old format (turns as individual scores) to new format (turns with rolls)
+    if (!oldState || !Array.isArray(oldState.players)) {
+      return null;
+    }
+
+    return {
+      version: 2,
+      players: oldState.players.map(function (player) {
+        const oldTurns = Array.isArray(player.turns) ? player.turns : [];
+        // Each old turn becomes a single-roll banked turn
+        const newTurns = oldTurns
+          .filter(function (t) {
+            return t && t.value && t.value.trim() !== "";
+          })
+          .map(function (oldTurn) {
+            return {
+              rolls: [{ value: oldTurn.value, committed: true }],
+              banked: true,
+              farkled: false,
+              collapsed: true,
+            };
+          });
+
+        // Add an active turn at the end
+        newTurns.push({
+          rolls: [{ value: "", committed: false }],
+          banked: false,
+          farkled: false,
+          collapsed: false,
+        });
+
+        return {
+          name: player.name,
+          turns: newTurns,
+        };
+      }),
+    };
   }
 
   function loadState() {
@@ -95,9 +149,17 @@ $(function () {
         return false;
       }
 
-      const parsedState = JSON.parse(rawState);
+      let parsedState = JSON.parse(rawState);
       if (!parsedState || !Array.isArray(parsedState.players)) {
         return false;
+      }
+
+      // Migrate old format if needed
+      if (!parsedState.version || parsedState.version < 2) {
+        parsedState = migrateOldState(parsedState);
+        if (!parsedState) {
+          return false;
+        }
       }
 
       parsedState.players.forEach(function (player) {
@@ -137,7 +199,7 @@ $(function () {
     saveState();
   }
 
-  function createPlayerColumn(playerName, turnRows) {
+  function createPlayerColumn(playerName, turns) {
     playerCount += 1;
 
     const playerLabel = playerName || `Player ${playerCount}`;
@@ -160,24 +222,21 @@ $(function () {
       class: "turns-container",
     });
 
-    const rowsToRestore = Array.isArray(turnRows) ? turnRows : [];
-
-    if (rowsToRestore.length > 0) {
-      rowsToRestore.forEach(function (row) {
-        addTurnInputRow(turnsContainer[0], playerScore[0], {
-          value: row && typeof row.value === "string" ? row.value : "",
-          committed: Boolean(row && row.committed),
-        });
-      });
-      ensureDraftRow(turnsContainer[0], playerScore[0]);
-    } else {
-      addTurnInputRow(turnsContainer[0], playerScore[0]);
-    }
-
-    updatePlayerScore(turnsContainer[0], playerScore[0]);
-
     playerColumn.append(playerNameElement, playerScore, turnsContainer);
     scorebox.append(playerColumn);
+
+    const turnsToRestore = Array.isArray(turns) ? turns : [];
+
+    if (turnsToRestore.length > 0) {
+      turnsToRestore.forEach(function (turn) {
+        createTurnContainer(turnsContainer[0], playerScore[0], turn);
+      });
+      ensureActiveTurn(turnsContainer[0], playerScore[0]);
+    } else {
+      createTurnContainer(turnsContainer[0], playerScore[0]);
+    }
+
+    updateCumulativeScore(playerColumn[0]);
     refreshFeatherIcons();
     saveState();
   }
@@ -187,15 +246,14 @@ $(function () {
     createPlayerColumn(promptedName);
   }
 
-  function sanitizeTurnValue(value) {
+  function sanitizeRollValue(value) {
     return value.replace(/\D/g, "").slice(0, 5);
   }
 
-  function updatePlayerScore(turnsContainer, playerScore) {
+  function calculateTurnSubtotal(turnContainer) {
     let total = 0;
-
-    $(turnsContainer)
-      .find(".turn-input")
+    $(turnContainer)
+      .find(".roll-input")
       .each(function () {
         if (this.value !== "") {
           const value = Number(this.value);
@@ -204,20 +262,206 @@ $(function () {
           }
         }
       });
-
-    $(playerScore).text(String(total));
+    return total;
   }
 
-  function ensureDraftRow(turnsContainer, playerScore) {
-    const hasDraft =
-      $(turnsContainer).find('.turn-row[data-committed="false"]').length > 0;
+  function updateTurnSubtotal(turnContainer) {
+    const $turn = $(turnContainer);
+    const subtotal = calculateTurnSubtotal(turnContainer);
+    const $subtotalDisplay = $turn.find(".turn-subtotal").first();
 
-    if (!hasDraft) {
-      addTurnInputRow(turnsContainer, playerScore);
+    if ($turn.attr("data-farkled") === "true") {
+      $subtotalDisplay.text("0").addClass("farkled");
+    } else {
+      $subtotalDisplay.text(String(subtotal)).removeClass("farkled");
     }
   }
 
-  function getNextPlayerAvailableInput(currentTurnsContainer) {
+  function updateCumulativeScore(playerColumn) {
+    let total = 0;
+    $(playerColumn)
+      .find(".turn-container")
+      .each(function () {
+        const $turn = $(this);
+        if ($turn.attr("data-banked") === "true") {
+          if ($turn.attr("data-farkled") === "true") {
+            // Farkled turns add 0
+          } else {
+            total += calculateTurnSubtotal(this);
+          }
+        }
+      });
+
+    $(playerColumn).find(".cumulative-score").first().text(String(total));
+  }
+
+  function ensureActiveTurn(turnsContainer, playerScore) {
+    const hasActiveTurn =
+      $(turnsContainer).find('.turn-container[data-banked="false"]').length > 0;
+
+    if (!hasActiveTurn) {
+      createTurnContainer(turnsContainer, playerScore);
+    }
+  }
+
+  function ensureDraftRoll(turnContainer, playerScore) {
+    const $turn = $(turnContainer);
+    if ($turn.attr("data-banked") === "true") {
+      return; // Don't add draft rolls to banked turns
+    }
+
+    const hasDraft = $turn.find('.roll-row[data-committed="false"]').length > 0;
+
+    if (!hasDraft) {
+      addRollInputRow(turnContainer, playerScore);
+    }
+
+    updateAddRollButtonVisibility(turnContainer);
+  }
+
+  function updateAddRollButtonVisibility(turnContainer) {
+    const $turn = $(turnContainer);
+    const hasDraft = $turn.find('.roll-row[data-committed="false"]').length > 0;
+    const $addRollBtn = $turn.find(".turn-btn-add-roll");
+
+    if (hasDraft) {
+      $addRollBtn.hide();
+    } else {
+      $addRollBtn.show();
+    }
+  }
+
+  function createTurnContainer(turnsContainer, playerScore, options) {
+    const opts = options || {};
+    const rolls = Array.isArray(opts.rolls) ? opts.rolls : [];
+    const isBanked = Boolean(opts.banked);
+    const isFarkled = Boolean(opts.farkled);
+    const isCollapsed = Boolean(opts.collapsed);
+
+    const turnContainer = $("<div>", {
+      class:
+        "turn-container" +
+        (isBanked ? "" : " active") +
+        (isCollapsed ? " collapsed" : ""),
+    })
+      .attr("data-banked", isBanked ? "true" : "false")
+      .attr("data-farkled", isFarkled ? "true" : "false");
+
+    // Turn header with subtotal and collapse toggle
+    const turnHeader = $("<div>", {
+      class: "turn-header",
+    });
+
+    const subtotalDisplay = $("<span>", {
+      class: "turn-subtotal" + (isFarkled ? " farkled" : ""),
+      text: "0",
+    });
+
+    const toggleButton = $("<button>", {
+      type: "button",
+      class: "turn-toggle",
+      "aria-label": "Toggle turn details",
+      html: '<i data-feather="chevron-down"></i>',
+    });
+
+    turnHeader.append(subtotalDisplay, toggleButton);
+
+    // Rolls container
+    const rollsContainer = $("<div>", {
+      class: "turn-rolls",
+    });
+
+    // Turn action buttons (Bank, Farkle, Add Roll)
+    const actionsBar = $("<div>", {
+      class: "turn-actions-bar",
+    });
+
+    const bankButton = $("<button>", {
+      type: "button",
+      class: "turn-btn turn-btn-bank",
+      text: "Bank",
+    });
+
+    const farkleButton = $("<button>", {
+      type: "button",
+      class: "turn-btn turn-btn-farkle",
+      text: "Farkle",
+    });
+
+    const addRollButton = $("<button>", {
+      type: "button",
+      class: "turn-btn turn-btn-add-roll",
+      html: '<i data-feather="plus"></i>',
+      "aria-label": "Add roll",
+    }).hide(); // Hidden by default, shown only when no draft exists
+
+    actionsBar.append(bankButton, farkleButton, addRollButton);
+
+    turnContainer.append(turnHeader, rollsContainer, actionsBar);
+    $(turnsContainer).append(turnContainer);
+
+    // Add rolls
+    if (rolls.length > 0) {
+      rolls.forEach(function (roll) {
+        addRollInputRow(turnContainer[0], playerScore, {
+          value: roll && typeof roll.value === "string" ? roll.value : "",
+          committed: Boolean(roll && roll.committed),
+        });
+      });
+    }
+
+    if (!isBanked) {
+      ensureDraftRoll(turnContainer[0], playerScore);
+    }
+
+    updateTurnSubtotal(turnContainer[0]);
+    updateAddRollButtonVisibility(turnContainer[0]);
+    refreshFeatherIcons();
+  }
+
+  function addRollInputRow(turnContainer, playerScore, options) {
+    const rowOptions = options || {};
+    const $rollsContainer = $(turnContainer).find(".turn-rolls").first();
+
+    const inputRow = $("<div>", {
+      class: "roll-row",
+    }).attr("data-committed", rowOptions.committed ? "true" : "false");
+
+    const rollInput = $("<input>", {
+      type: "search",
+      class: "roll-input",
+      pattern: "[0-9]{0,5}",
+      maxlength: 5,
+      placeholder: "Roll score",
+      value: sanitizeRollValue(String(rowOptions.value || "")),
+    })
+      .attr("inputmode", "numeric")
+      .prop("readOnly", Boolean(rowOptions.committed));
+
+    const editButton = $("<button>", {
+      type: "button",
+      class: "turn-action roll-edit",
+      "aria-label": "Edit roll",
+      html: '<i class="edit" data-feather="edit"></i>',
+    }).prop("disabled", !rowOptions.committed);
+
+    const deleteButton = $("<button>", {
+      type: "button",
+      class: "turn-action roll-delete",
+      "aria-label": "Delete roll",
+      html: '<i class="delete" data-feather="trash-2"></i>',
+    });
+
+    const actions = $("<div>", {
+      class: "turn-actions",
+    }).append(editButton, deleteButton);
+
+    inputRow.append(rollInput, actions);
+    $rollsContainer.append(inputRow);
+    refreshFeatherIcons();
+  }
+
+  function getNextPlayerTurnsContainer(currentTurnsContainer) {
     const $playerColumns = scorebox.find(".player-column");
     const currentColumn = $(currentTurnsContainer).closest(".player-column")[0];
 
@@ -230,68 +474,139 @@ $(function () {
       return null;
     }
 
-    for (let offset = 1; offset < $playerColumns.length; offset += 1) {
-      const nextColumn =
-        $playerColumns.get()[(currentIndex + offset) % $playerColumns.length];
-      const nextInput = $(nextColumn)
-        .find(".turn-input:not([readonly])")
-        .first()[0];
+    const nextColumn =
+      $playerColumns.get()[(currentIndex + 1) % $playerColumns.length];
+    return $(nextColumn).find(".turns-container").first()[0];
+  }
 
+  function bankTurn(turnContainer) {
+    const $turn = $(turnContainer);
+    const turnsContainer = $turn.closest(".turns-container")[0];
+    const playerColumn = $turn.closest(".player-column")[0];
+    const playerScore = $(playerColumn).find(".cumulative-score").first()[0];
+
+    // Commit any uncommitted rolls before banking
+    $turn.find('.roll-row[data-committed="false"]').each(function () {
+      const $row = $(this);
+      const $input = $row.find(".roll-input");
+      const sanitized = sanitizeRollValue($input.val());
+
+      if (sanitized === "") {
+        // Remove empty uncommitted rolls
+        $row.remove();
+      } else {
+        $input.val(sanitized);
+        $input.prop("readOnly", true);
+        $row.attr("data-committed", "true");
+        $row.find(".roll-edit").prop("disabled", false);
+      }
+    });
+
+    // Mark turn as banked
+    $turn.attr("data-banked", "true");
+    $turn.removeClass("active");
+    $turn.addClass("collapsed");
+
+    updateTurnSubtotal(turnContainer);
+    updateCumulativeScore(playerColumn);
+
+    // Create new turn for next player
+    const nextTurnsContainer = getNextPlayerTurnsContainer(turnsContainer);
+    if (nextTurnsContainer) {
+      const nextPlayerColumn =
+        $(nextTurnsContainer).closest(".player-column")[0];
+      const nextPlayerScore = $(nextPlayerColumn)
+        .find(".cumulative-score")
+        .first()[0];
+      ensureActiveTurn(nextTurnsContainer, nextPlayerScore);
+
+      // Focus the first input of the next player's active turn
+      const nextInput = $(nextTurnsContainer)
+        .find(
+          '.turn-container[data-banked="false"] .roll-input:not([readonly])',
+        )
+        .first()[0];
       if (nextInput) {
-        return nextInput;
+        nextInput.focus();
+      }
+    } else {
+      // Single player: create new turn for same player
+      ensureActiveTurn(turnsContainer, playerScore);
+      const nextInput = $(turnsContainer)
+        .find(
+          '.turn-container[data-banked="false"] .roll-input:not([readonly])',
+        )
+        .first()[0];
+      if (nextInput) {
+        nextInput.focus();
       }
     }
 
-    return null;
+    saveState();
   }
 
-  function addTurnInputRow(turnsContainer, playerScore, options) {
-    const rowOptions = options || {};
+  function farkleTurn(turnContainer) {
+    const $turn = $(turnContainer);
+    const turnsContainer = $turn.closest(".turns-container")[0];
+    const playerColumn = $turn.closest(".player-column")[0];
+    const playerScore = $(playerColumn).find(".cumulative-score").first()[0];
 
-    const inputRow = $("<div>", {
-      class: "turn-row",
-    }).attr("data-committed", rowOptions.committed ? "true" : "false");
+    // Mark turn as farkled and banked
+    $turn.attr("data-banked", "true");
+    $turn.attr("data-farkled", "true");
+    $turn.removeClass("active");
+    $turn.addClass("collapsed");
 
-    const turnInput = $("<input>", {
-      type: "search",
-      class: "turn-input",
-      pattern: "[0-9]{0,5}",
-      maxlength: 5,
-      placeholder: "Turn score",
-      value: sanitizeTurnValue(String(rowOptions.value || "")),
-    })
-      .attr("inputmode", "numeric")
-      .prop("readOnly", Boolean(rowOptions.committed));
+    updateTurnSubtotal(turnContainer);
+    updateCumulativeScore(playerColumn);
 
-    const editButton = $("<button>", {
-      type: "button",
-      class: "turn-action turn-edit",
-      "aria-label": "Edit score",
-      html: '<i class="edit" data-feather="edit"></i>',
-    }).prop("disabled", !rowOptions.committed);
+    // Create new turn for next player
+    const nextTurnsContainer = getNextPlayerTurnsContainer(turnsContainer);
+    if (nextTurnsContainer) {
+      const nextPlayerColumn =
+        $(nextTurnsContainer).closest(".player-column")[0];
+      const nextPlayerScore = $(nextPlayerColumn)
+        .find(".cumulative-score")
+        .first()[0];
+      ensureActiveTurn(nextTurnsContainer, nextPlayerScore);
 
-    const deleteButton = $("<button>", {
-      type: "button",
-      class: "turn-action turn-delete",
-      "aria-label": "Delete score",
-      html: '<i class="delete" data-feather="trash-2"></i>',
-    });
+      const nextInput = $(nextTurnsContainer)
+        .find(
+          '.turn-container[data-banked="false"] .roll-input:not([readonly])',
+        )
+        .first()[0];
+      if (nextInput) {
+        nextInput.focus();
+      }
+    } else {
+      // Single player: create new turn for same player
+      ensureActiveTurn(turnsContainer, playerScore);
+      const nextInput = $(turnsContainer)
+        .find(
+          '.turn-container[data-banked="false"] .roll-input:not([readonly])',
+        )
+        .first()[0];
+      if (nextInput) {
+        nextInput.focus();
+      }
+    }
 
-    const actions = $("<div>", {
-      class: "turn-actions",
-    }).append(editButton, deleteButton);
-
-    inputRow.append(turnInput, actions);
-    $(turnsContainer).append(inputRow);
-    refreshFeatherIcons();
+    saveState();
   }
 
-  function getRowContextFromInput(turnInput) {
-    const $turnInput = $(turnInput);
-    const inputRow = $turnInput.closest(".turn-row")[0];
-    const turnsContainer = $turnInput.closest(".turns-container")[0];
+  function toggleTurnCollapse(turnContainer) {
+    const $turn = $(turnContainer);
+    $turn.toggleClass("collapsed");
+    saveState();
+  }
 
-    if (!inputRow || !turnsContainer) {
+  function getRowContextFromInput(rollInput) {
+    const $rollInput = $(rollInput);
+    const inputRow = $rollInput.closest(".roll-row")[0];
+    const turnContainer = $rollInput.closest(".turn-container")[0];
+    const turnsContainer = $rollInput.closest(".turns-container")[0];
+
+    if (!inputRow || !turnContainer || !turnsContainer) {
       return null;
     }
 
@@ -307,12 +622,15 @@ $(function () {
 
     return {
       inputRow: inputRow,
+      turnContainer: turnContainer,
       turnsContainer: turnsContainer,
+      playerColumn: playerColumn,
       playerScore: playerScore,
     };
   }
 
-  scorebox.on("focus", ".turn-input", function () {
+  // Event handlers
+  scorebox.on("focus", ".roll-input", function () {
     const column = $(this).closest(".player-column")[0];
     if (column) {
       column.scrollIntoView({
@@ -323,22 +641,23 @@ $(function () {
     }
   });
 
-  scorebox.on("input", ".turn-input", function () {
+  scorebox.on("input", ".roll-input", function () {
     const context = getRowContextFromInput(this);
     if (!context) {
       return;
     }
 
-    const sanitized = sanitizeTurnValue(this.value);
+    const sanitized = sanitizeRollValue(this.value);
     if (sanitized !== this.value) {
       this.value = sanitized;
     }
 
-    updatePlayerScore(context.turnsContainer, context.playerScore);
+    updateTurnSubtotal(context.turnContainer);
+    updateCumulativeScore(context.playerColumn);
     saveState();
   });
 
-  scorebox.on("keydown", ".turn-input", function (event) {
+  scorebox.on("keydown", ".roll-input", function (event) {
     if (event.key !== "Enter") {
       return;
     }
@@ -350,10 +669,7 @@ $(function () {
 
     event.preventDefault();
 
-    const wasDraftRow = context.inputRow.dataset.committed === "false";
-    const wasLastRow = context.inputRow.nextElementSibling === null;
-
-    const sanitized = sanitizeTurnValue(this.value);
+    const sanitized = sanitizeRollValue(this.value);
     if (sanitized === "") {
       return;
     }
@@ -362,79 +678,117 @@ $(function () {
     this.readOnly = true;
     context.inputRow.dataset.committed = "true";
 
-    const editButton = $(context.inputRow).find(".turn-edit").first()[0];
+    const editButton = $(context.inputRow).find(".roll-edit").first()[0];
     if (editButton) {
       editButton.disabled = false;
     }
 
-    if (context.inputRow.nextElementSibling === null) {
-      addTurnInputRow(context.turnsContainer, context.playerScore);
-    }
+    // Add new roll input
+    ensureDraftRoll(context.turnContainer, context.playerScore);
 
-    const newestInput = $(context.turnsContainer).find(".turn-input").last()[0];
-
-    if (wasDraftRow && wasLastRow) {
-      const nextPlayerInput = getNextPlayerAvailableInput(
-        context.turnsContainer,
-      );
-      if (nextPlayerInput) {
-        nextPlayerInput.focus();
-        updatePlayerScore(context.turnsContainer, context.playerScore);
-        return;
-      }
-    }
-
+    // Focus the new input
+    const newestInput = $(context.turnContainer)
+      .find(".roll-input:not([readonly])")
+      .last()[0];
     if (newestInput && newestInput !== this) {
       newestInput.focus();
     }
 
-    updatePlayerScore(context.turnsContainer, context.playerScore);
+    updateTurnSubtotal(context.turnContainer);
+    updateCumulativeScore(context.playerColumn);
     saveState();
   });
 
-  scorebox.on("click", ".turn-edit", function () {
-    const inputRow = $(this).closest(".turn-row")[0];
+  scorebox.on("click", ".roll-edit", function () {
+    const inputRow = $(this).closest(".roll-row")[0];
     if (!inputRow || inputRow.dataset.committed !== "true") {
       return;
     }
 
-    const turnInput = $(inputRow).find(".turn-input").first()[0];
-    if (!turnInput) {
+    const rollInput = $(inputRow).find(".roll-input").first()[0];
+    if (!rollInput) {
       return;
     }
 
-    turnInput.readOnly = false;
-    turnInput.focus();
-    turnInput.select();
+    rollInput.readOnly = false;
+    rollInput.focus();
+    rollInput.select();
     saveState();
   });
 
-  scorebox.on("click", ".turn-delete", function () {
-    const inputRow = $(this).closest(".turn-row")[0];
+  scorebox.on("click", ".roll-delete", function () {
+    const inputRow = $(this).closest(".roll-row")[0];
     if (!inputRow) {
       return;
     }
 
-    const turnsContainer = $(inputRow).closest(".turns-container")[0];
+    const turnContainer = $(inputRow).closest(".turn-container")[0];
     const playerColumn = $(inputRow).closest(".player-column")[0];
     const playerScore = playerColumn
       ? $(playerColumn).find(".cumulative-score").first()[0]
       : null;
 
-    if (!turnsContainer || !playerScore) {
+    if (!turnContainer || !playerScore) {
       return;
     }
 
     inputRow.remove();
-    updatePlayerScore(turnsContainer, playerScore);
-    ensureDraftRow(turnsContainer, playerScore);
+    updateTurnSubtotal(turnContainer);
+    updateCumulativeScore(playerColumn);
 
-    const lastInput = $(turnsContainer).find(".turn-input").last()[0];
-    if (lastInput && !lastInput.readOnly) {
-      lastInput.focus();
+    const $turn = $(turnContainer);
+    if ($turn.attr("data-banked") !== "true") {
+      ensureDraftRoll(turnContainer, playerScore);
+
+      const lastInput = $(turnContainer).find(".roll-input").last()[0];
+      if (lastInput && !lastInput.readOnly) {
+        lastInput.focus();
+      }
     }
 
     saveState();
+  });
+
+  scorebox.on("click", ".turn-header", function () {
+    const turnContainer = $(this).closest(".turn-container")[0];
+    if (turnContainer) {
+      toggleTurnCollapse(turnContainer);
+    }
+  });
+
+  scorebox.on("click", ".turn-btn-bank", function (event) {
+    event.stopPropagation();
+    const turnContainer = $(this).closest(".turn-container")[0];
+    if (turnContainer) {
+      bankTurn(turnContainer);
+    }
+  });
+
+  scorebox.on("click", ".turn-btn-farkle", function (event) {
+    event.stopPropagation();
+    const turnContainer = $(this).closest(".turn-container")[0];
+    if (turnContainer) {
+      farkleTurn(turnContainer);
+    }
+  });
+
+  scorebox.on("click", ".turn-btn-add-roll", function (event) {
+    event.stopPropagation();
+    const turnContainer = $(this).closest(".turn-container")[0];
+    const playerColumn = $(turnContainer).closest(".player-column")[0];
+    const playerScore = $(playerColumn).find(".cumulative-score").first()[0];
+
+    if (turnContainer && playerScore) {
+      addRollInputRow(turnContainer, playerScore);
+      updateAddRollButtonVisibility(turnContainer);
+
+      const newInput = $(turnContainer)
+        .find(".roll-input:not([readonly])")
+        .last()[0];
+      if (newInput) {
+        newInput.focus();
+      }
+    }
   });
 
   addPlayerButton.on("click", addPlayer);
@@ -455,7 +809,9 @@ $(function () {
 
   function initializeTheme() {
     const savedTheme = localStorage.getItem(THEME_KEY);
-    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    const prefersDark = window.matchMedia(
+      "(prefers-color-scheme: dark)",
+    ).matches;
     const shouldBeDark = savedTheme ? savedTheme === "dark" : prefersDark;
 
     if (shouldBeDark) {
@@ -468,7 +824,11 @@ $(function () {
   }
 
   themeToggle.on("click", function () {
-    const currentTheme = document.documentElement.getAttribute("data-theme") || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+    const currentTheme =
+      document.documentElement.getAttribute("data-theme") ||
+      (window.matchMedia("(prefers-color-scheme: dark)").matches
+        ? "dark"
+        : "light");
     const newTheme = currentTheme === "dark" ? "light" : "dark";
 
     document.documentElement.setAttribute("data-theme", newTheme);

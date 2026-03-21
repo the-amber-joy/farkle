@@ -88,21 +88,24 @@ body {
   max-height: 60vh;
 }
 
-.turn-row {
+.turn-row,
+.roll-row {
   width: 100%;
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
-.turn-input {
+.turn-input,
+.roll-input {
   flex: 1;
   min-width: 0;
   padding: 6px 8px;
   box-sizing: border-box;
 }
 
-.turn-input:read-only {
+.turn-input:read-only,
+.roll-input:read-only {
   background: var(--bg-tertiary);
 }
 
@@ -136,6 +139,127 @@ body {
 
 .edit {
   color: #007bff;
+}
+
+/* Turn container styles */
+.turn-container {
+  border: 2px solid var(--border-color);
+  border-radius: 8px;
+  padding: 10px;
+  margin-bottom: 8px;
+  background: var(--bg-tertiary);
+}
+
+.turn-container.active {
+  border-color: #007bff;
+  background: var(--bg-secondary);
+}
+
+.turn-container.collapsed .turn-rolls {
+  display: none;
+}
+
+.turn-container.collapsed .turn-actions-bar {
+  display: none;
+}
+
+.turn-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  margin-bottom: 6px;
+}
+
+.turn-header:hover {
+  opacity: 0.8;
+}
+
+.turn-subtotal {
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+.turn-subtotal.farkled {
+  color: #dc3545;
+  text-decoration: line-through;
+}
+
+.turn-toggle {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 2px;
+  color: var(--text-secondary);
+}
+
+.turn-toggle svg {
+  width: 16px;
+  height: 16px;
+  transition: transform 0.2s ease;
+}
+
+.turn-container.collapsed .turn-toggle svg {
+  transform: rotate(-90deg);
+}
+
+.turn-rolls {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.turn-actions-bar {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.turn-btn {
+  flex: 1;
+  padding: 8px 12px;
+  border: 1px solid var(--button-border);
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.turn-btn-bank {
+  background: #28a745;
+  color: white;
+  border-color: #28a745;
+}
+
+.turn-btn-bank:hover {
+  background: #218838;
+}
+
+.turn-btn-farkle {
+  background: #dc3545;
+  color: white;
+  border-color: #dc3545;
+}
+
+.turn-btn-farkle:hover {
+  background: #c82333;
+}
+
+.turn-btn-add-roll {
+  background: var(--button-bg);
+  color: var(--text-primary);
+  flex: 0 0 auto;
+  padding: 8px;
+}
+
+.turn-btn-add-roll:hover {
+  background: var(--bg-tertiary);
+}
+
+.turn-banked-total {
+  font-size: 1rem;
+  color: var(--text-secondary);
 }
 
 @media (max-width: 600px) {
