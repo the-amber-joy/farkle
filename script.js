@@ -436,7 +436,7 @@ $(function () {
       value: sanitizeRollValue(String(rowOptions.value || "")),
     })
       .attr("inputmode", "numeric")
-      .attr("enterkeyhint", "done")
+      .attr("enterkeyhint", "next")
       .prop("readOnly", Boolean(rowOptions.committed));
 
     const editButton = $("<button>", {
