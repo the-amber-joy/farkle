@@ -1,0 +1,72 @@
+/* Shared Modal Styles */
+
+/* Base dialog styles */
+.modal-base {
+  border: 2px solid var(--border-color);
+  border-radius: 12px;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  padding: 0;
+  width: calc(100% - 32px);
+  max-width: 400px;
+  margin: auto;
+}
+
+.modal-base::backdrop {
+  background: rgba(0, 0, 0, 0.6);
+}
+
+/* Content wrapper */
+.modal-content {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Close/minimize button */
+.modal-close-btn {
+  position: absolute;
+  right: 16px;
+  top: 16px;
+  width: 28px;
+  height: 28px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-tertiary);
+  color: var(--text-secondary);
+  border-radius: 4px;
+  font-size: 1.2rem;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-close-btn:hover {
+  background: var(--border-color);
+  color: var(--text-primary);
+}
+
+/* Primary action button (gold) */
+.modal-btn-primary {
+  width: 100%;
+  padding: 14px 20px;
+  border: none;
+  border-radius: 8px;
+  background: var(--accent-gold);
+  color: #1a1a1a;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.modal-btn-primary:hover:not(:disabled) {
+  opacity: 0.9;
+}
+
+.modal-btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

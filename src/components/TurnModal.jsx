@@ -92,17 +92,17 @@ export default function TurnModal() {
   return (
     <dialog
       ref={dialogRef}
-      className="turn-modal"
+      className="modal-base turn-modal"
       onClick={handleDialogClick}
       onCancel={handleCancel}
       aria-labelledby="turn-modal-title"
     >
-      <div className="turn-modal__content">
+      <div className="modal-content turn-modal__content">
         <header className="turn-modal__header">
           <h2 id="turn-modal-title">{currentPlayer.name}'s Turn</h2>
           <button
             onClick={closeTurnModal}
-            className="turn-modal__minimize-btn"
+            className="modal-close-btn"
             aria-label="Minimize"
           >
             −

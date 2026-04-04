@@ -1,15 +1,10 @@
 /* WinnerModal styles - Mobile First */
 
+/* Winner-specific overrides (base styles in modals.css) */
 .winner-modal {
   border: 3px solid var(--accent-gold);
   border-radius: 16px;
-  background: var(--bg-secondary);
-  color: var(--text-primary);
-  padding: 0;
-  width: calc(100% - 32px);
-  max-width: 400px;
   max-height: calc(100vh - 48px);
-  margin: auto;
   box-shadow: 0 0 30px rgba(212, 175, 55, 0.3);
   position: relative;
   overflow: hidden;
@@ -25,37 +20,10 @@
 }
 
 .winner-modal__content {
-  padding: 24px;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
   position: relative;
   overflow-y: auto;
   flex: 1;
   min-height: 0;
-}
-
-.winner-modal__close-btn {
-  position: absolute;
-  right: 16px;
-  top: 16px;
-  width: 28px;
-  height: 28px;
-  border: 1px solid var(--border-color);
-  background: var(--bg-tertiary);
-  color: var(--text-secondary);
-  border-radius: 4px;
-  font-size: 1.2rem;
-  line-height: 1;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.winner-modal__close-btn:hover {
-  background: var(--border-color);
-  color: var(--text-primary);
 }
 
 .winner-modal__celebration {

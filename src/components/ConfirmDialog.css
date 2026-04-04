@@ -1,24 +1,11 @@
 /* ConfirmDialog styles */
 
+/* Confirm-specific overrides (base styles in modals.css) */
 .confirm-dialog {
-  border: 2px solid var(--border-color);
-  border-radius: 12px;
-  background: var(--bg-secondary);
-  color: var(--text-primary);
-  padding: 0;
-  width: calc(100% - 32px);
   max-width: 360px;
-  margin: auto;
-}
-
-.confirm-dialog::backdrop {
-  background: rgba(0, 0, 0, 0.6);
 }
 
 .confirm-dialog__content {
-  padding: 24px;
-  display: flex;
-  flex-direction: column;
   gap: 16px;
 }
 

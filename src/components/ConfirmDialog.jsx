@@ -45,12 +45,12 @@ export default function ConfirmDialog({
   return (
     <dialog
       ref={dialogRef}
-      className="confirm-dialog"
+      className="modal-base confirm-dialog"
       onClick={handleDialogClick}
       onCancel={handleCancel}
       aria-labelledby="confirm-dialog-title"
     >
-      <div className="confirm-dialog__content">
+      <div className="modal-content confirm-dialog__content">
         <h2 id="confirm-dialog-title">{title}</h2>
         <p>{message}</p>
         <div className="confirm-dialog__actions">

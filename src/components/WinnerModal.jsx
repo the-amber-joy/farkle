@@ -26,17 +26,17 @@ export default function WinnerModal() {
   const launchConfetti = () => {
     // Create a fresh confetti instance each time to avoid stale canvas issues
     if (!canvasRef.current) return;
-    
+
     // Reset any existing instance
     if (confettiRef.current) {
       confettiRef.current.reset();
     }
-    
+
     confettiRef.current = confetti.create(canvasRef.current, {
       resize: true,
       useWorker: false, // Disable worker to avoid async issues
     });
-    
+
     const myConfetti = confettiRef.current;
     const dieShape = confetti.shapeFromText({ text: "🎲", scalar: 2 });
     const colors = ["#d4af37", "#ffd700", "#f5f5dc", "#b8860b", "#daa520"];
@@ -128,14 +128,14 @@ export default function WinnerModal() {
     <>
       <dialog
         ref={dialogRef}
-        className="winner-modal"
+        className="modal-base winner-modal"
         onClick={handleDialogClick}
         aria-labelledby="winner-modal-title"
       >
-        <div className="winner-modal__content">
+        <div className="modal-content winner-modal__content">
           <button
             onClick={closeWinnerModal}
-            className="winner-modal__close-btn"
+            className="modal-close-btn"
             aria-label="Close"
           >
             X
@@ -185,7 +185,7 @@ export default function WinnerModal() {
             New Game
           </button>
         </div>
-        
+
         <canvas
           ref={canvasRef}
           className="winner-modal__confetti"
