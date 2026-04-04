@@ -10,6 +10,7 @@ import "./WinnerModal.css";
 export default function WinnerModal() {
   const dialogRef = useRef(null);
   const canvasRef = useRef(null);
+  const confettiRef = useRef(null);
 
   const {
     players,
@@ -23,27 +24,30 @@ export default function WinnerModal() {
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
 
   const launchConfetti = () => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    const myConfetti = confetti.create(canvas, {
+    // Create a fresh confetti instance each time to avoid stale canvas issues
+    if (!canvasRef.current) return;
+    
+    // Reset any existing instance
+    if (confettiRef.current) {
+      confettiRef.current.reset();
+    }
+    
+    confettiRef.current = confetti.create(canvasRef.current, {
       resize: true,
-      useWorker: true,
+      useWorker: false, // Disable worker to avoid async issues
     });
-
+    
+    const myConfetti = confettiRef.current;
     const dieShape = confetti.shapeFromText({ text: "🎲", scalar: 2 });
-
-    const commonOptions = {
-      disableForReducedMotion: true,
-      colors: ["#d4af37", "#ffd700", "#f5f5dc", "#b8860b", "#daa520"],
-    };
+    const colors = ["#d4af37", "#ffd700", "#f5f5dc", "#b8860b", "#daa520"];
 
     // Initial burst
     myConfetti({
-      ...commonOptions,
+      disableForReducedMotion: true,
       particleCount: 100,
       spread: 70,
-      origin: { y: 0.6 },
+      origin: { y: 1 },
+      colors,
     });
 
     // Dice burst
@@ -51,7 +55,7 @@ export default function WinnerModal() {
       disableForReducedMotion: true,
       particleCount: 15,
       spread: 120,
-      origin: { y: 0.5 },
+      origin: { y: 1 },
       shapes: [dieShape],
       scalar: 2,
       flat: true,
@@ -59,20 +63,24 @@ export default function WinnerModal() {
 
     // Side cannons
     setTimeout(() => {
-      myConfetti({
-        ...commonOptions,
-        particleCount: 50,
-        angle: 60,
-        spread: 55,
-        origin: { x: 0 },
-      });
-      myConfetti({
-        ...commonOptions,
-        particleCount: 50,
-        angle: 120,
-        spread: 55,
-        origin: { x: 1 },
-      });
+      if (confettiRef.current) {
+        confettiRef.current({
+          disableForReducedMotion: true,
+          particleCount: 50,
+          angle: 60,
+          spread: 55,
+          origin: { x: 0, y: 1 },
+          colors,
+        });
+        confettiRef.current({
+          disableForReducedMotion: true,
+          particleCount: 50,
+          angle: 120,
+          spread: 55,
+          origin: { x: 1, y: 1 },
+          colors,
+        });
+      }
     }, 250);
   };
 
@@ -86,6 +94,11 @@ export default function WinnerModal() {
       // Small delay to ensure canvas is rendered
       setTimeout(() => launchConfetti(), 50);
     } else {
+      // Cleanup confetti when closing
+      if (confettiRef.current) {
+        confettiRef.current.reset();
+        confettiRef.current = null;
+      }
       dialog.close();
     }
   }, [isWinnerModalOpen, winner]);
@@ -172,6 +185,7 @@ export default function WinnerModal() {
             New Game
           </button>
         </div>
+        
         <canvas
           ref={canvasRef}
           className="winner-modal__confetti"

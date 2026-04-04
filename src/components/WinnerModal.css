@@ -24,15 +24,6 @@
   background: rgba(0, 0, 0, 0.7);
 }
 
-.winner-modal__confetti {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  pointer-events: none;
-}
-
 .winner-modal__content {
   padding: 24px;
   display: flex;
@@ -174,4 +165,13 @@
 
 .winner-modal__new-game-btn:hover {
   opacity: 0.9;
+}
+
+.winner-modal__confetti {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 10;
 }

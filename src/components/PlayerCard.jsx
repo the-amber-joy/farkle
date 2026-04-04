@@ -36,7 +36,7 @@ export default function PlayerCard({ name, score, isActive, isWinner }) {
       disableForReducedMotion: true,
       particleCount: 100,
       spread: 70,
-      origin: { y: 0.6 },
+      origin: { y: 1 },
       colors,
     });
 
@@ -44,7 +44,7 @@ export default function PlayerCard({ name, score, isActive, isWinner }) {
       disableForReducedMotion: true,
       particleCount: 15,
       spread: 60,
-      origin: { y: 0.5 },
+      origin: { y: 1 },
       shapes: [dieShape],
       scalar: 2,
       flat: true,
@@ -56,7 +56,7 @@ export default function PlayerCard({ name, score, isActive, isWinner }) {
         particleCount: 50,
         angle: 60,
         spread: 55,
-        origin: { x: 0 },
+        origin: { x: 0, y: 1 },
         colors,
       });
       confetti({
@@ -64,7 +64,7 @@ export default function PlayerCard({ name, score, isActive, isWinner }) {
         particleCount: 50,
         angle: 120,
         spread: 55,
-        origin: { x: 1 },
+        origin: { x: 1, y: 1 },
         colors,
       });
     }, 250);
