@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import "./App.css";
 import AddPlayerForm from "./components/AddPlayerForm";
 import PlayerCard from "./components/PlayerCard";
@@ -21,6 +21,15 @@ function Game() {
   } = useGameStore();
   const addPlayerFormRef = useRef(null);
 
+  // Easter egg: clicking title cycles fonts
+  const FONTS = [
+    "'Bangers', cursive",
+    "'Fredoka', sans-serif",
+    "'Luckiest Guy', cursive",
+    "'Bungee', cursive",
+  ];
+  const [fontIndex, setFontIndex] = useState(0);
+
   const handleStartGame = () => {
     startGame();
   };
@@ -39,8 +48,22 @@ function Game() {
 
   return (
     <div className="game">
+      {/* Preload fonts to prevent FOUT */}
+      <div aria-hidden="true" style={{ position: "absolute", left: "-9999px" }}>
+        {FONTS.map((font) => (
+          <span key={font} style={{ fontFamily: font }}>
+            .
+          </span>
+        ))}
+      </div>
+
       <header className="game__header">
-        <h1>Let's Farkle</h1>
+        <h1
+          style={{ fontFamily: FONTS[fontIndex], cursor: "pointer" }}
+          onClick={() => setFontIndex((i) => (i + 1) % FONTS.length)}
+        >
+          Let's Farkle
+        </h1>
       </header>
 
       <section className="game__players">

@@ -20,13 +20,17 @@
 
 .game__header h1 {
   margin: 0;
-  font-size: 2rem;
-  color: var(--text-primary);
+  font-size: 2.5rem;
+  letter-spacing: 0.05em;
+  color: var(--accent-gold);
+  text-shadow:
+    2px 2px 0 #0d5c2e,
+    3px 3px 0 rgba(0, 0, 0, 0.3);
 }
 
 @media (min-width: 768px) {
   .game__header h1 {
-    font-size: 2.5rem;
+    font-size: 3.5rem;
   }
 }
 
