@@ -1,6 +1,7 @@
 import { useRef, useState } from "react";
 import "./App.css";
 import AddPlayerForm from "./components/AddPlayerForm";
+import ConfirmDialog from "./components/ConfirmDialog";
 import PlayerCard from "./components/PlayerCard";
 import TurnModal from "./components/TurnModal";
 import WinnerModal from "./components/WinnerModal";
@@ -29,21 +30,21 @@ function Game() {
     "'Bungee', cursive",
   ];
   const [fontIndex, setFontIndex] = useState(0);
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
 
   const handleStartGame = () => {
     startGame();
   };
 
   const handleNewGame = () => {
-    if (
-      window.confirm(
-        "Start a new game?\n\nThis will clear all players and scores. This action cannot be undone.",
-      )
-    ) {
-      resetGame();
-      // Focus the add player input after reset
-      setTimeout(() => addPlayerFormRef.current?.focus(), 0);
-    }
+    setShowConfirmDialog(true);
+  };
+
+  const handleConfirmNewGame = () => {
+    setShowConfirmDialog(false);
+    resetGame();
+    // Focus the add player input after reset
+    setTimeout(() => addPlayerFormRef.current?.focus(), 0);
   };
 
   return (
@@ -95,6 +96,17 @@ function Game() {
 
       {isGameStarted && <TurnModal />}
       {isGameStarted && <WinnerModal />}
+
+      <ConfirmDialog
+        isOpen={showConfirmDialog}
+        title="Start Over?"
+        message="This will clear all players and scores. This action cannot be undone."
+        confirmText="Start Over"
+        cancelText="Cancel"
+        onConfirm={handleConfirmNewGame}
+        onCancel={() => setShowConfirmDialog(false)}
+        danger
+      />
     </div>
   );
 }
