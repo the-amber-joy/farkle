@@ -107,9 +107,6 @@
 /* FABs */
 .start-game-fab,
 .new-game-fab {
-  position: fixed;
-  bottom: 24px;
-  right: 24px;
   display: flex;
   align-items: center;
   gap: 6px;
@@ -125,6 +122,16 @@
     background 0.2s ease,
     transform 0.1s ease;
   z-index: 100;
+}
+
+.new-game-fab {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+}
+
+.start-game-fab {
+  margin: 24px auto 16px;
 }
 
 .start-game-fab span,
