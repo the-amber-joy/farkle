@@ -104,50 +104,59 @@
   background: var(--border-color);
 }
 
-/* Footer with New Game button */
-.game__footer {
-  margin-top: auto;
-  padding: 24px 16px;
-  text-align: center;
+/* FABs */
+.start-game-fab,
+.new-game-fab {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
   display: flex;
-  justify-content: center;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-
-.new-game-btn {
-  padding: 8px 16px;
-  border: 1px solid #c9302c;
-  background: #a94442;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 16px;
+  border-radius: 28px;
+  border: none;
   color: var(--text-primary);
-  border-radius: 6px;
-  font-size: 0.85rem;
-  cursor: pointer;
-  transition: background 0.2s ease;
-}
-
-.new-game-btn:hover {
-  background: #c9302c;
-}
-
-.start-game-btn {
-  padding: 12px 24px;
-  border: 2px solid var(--accent-gold);
-  background: linear-gradient(135deg, #1a7a42 0%, #2e8b57 100%);
-  color: var(--text-primary);
-  border-radius: 8px;
-  font-size: 1.1rem;
+  font-size: 0.9rem;
   font-weight: 600;
   cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   transition:
-    transform 0.1s ease,
-    box-shadow 0.2s ease;
+    background 0.2s ease,
+    transform 0.1s ease;
+  z-index: 100;
 }
 
-.start-game-btn:hover {
-  box-shadow: 0 0 15px rgba(212, 175, 55, 0.5);
+.start-game-fab span,
+.new-game-fab span {
+  font-size: 1.2rem;
 }
 
-.start-game-btn:active {
-  transform: scale(0.98);
+.start-game-fab:hover,
+.new-game-fab:hover {
+  transform: scale(1.05);
+}
+
+.start-game-fab:active,
+.new-game-fab:active {
+  transform: scale(0.95);
+}
+
+.start-game-fab {
+  background: linear-gradient(135deg, #1a7a42 0%, #2e8b57 100%);
+  border: 2px solid var(--accent-gold);
+}
+
+.start-game-fab:hover {
+  box-shadow:
+    0 4px 12px rgba(0, 0, 0, 0.3),
+    0 0 15px rgba(212, 175, 55, 0.5);
+}
+
+.new-game-fab {
+  background: #a94442;
+}
+
+.new-game-fab:hover {
+  background: #c9302c;
 }

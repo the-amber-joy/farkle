@@ -81,18 +81,17 @@ function Game() {
         ))}
       </section>
 
-      <footer className="game__footer">
-        {!isGameStarted && players.length >= 1 && (
-          <button onClick={handleStartGame} className="start-game-btn">
-            Start Game
-          </button>
-        )}
-        {isGameStarted && (
-          <button onClick={handleNewGame} className="new-game-btn">
-            New Game
-          </button>
-        )}
-      </footer>
+      {!isGameStarted && players.length >= 1 && (
+        <button onClick={handleStartGame} className="start-game-fab">
+          <span aria-hidden="true">▶</span> Start Game
+        </button>
+      )}
+
+      {isGameStarted && (
+        <button onClick={handleNewGame} className="new-game-fab">
+          <span aria-hidden="true">↻</span> Start Over
+        </button>
+      )}
 
       {isGameStarted && <TurnModal />}
       {isGameStarted && <WinnerModal />}
