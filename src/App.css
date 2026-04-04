@@ -96,7 +96,7 @@
   cursor: pointer;
 }
 
-.add-player__btn:hover {
+.add-player__btn:hover:not(:disabled) {
   background: var(--border-color);
 }
 

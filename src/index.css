@@ -143,3 +143,14 @@ input:focus-visible,
   outline: 3px solid var(--accent-gold);
   outline-offset: 2px;
 }
+
+/* Disabled button styles */
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+button:disabled:hover {
+  transform: none;
+  filter: none;
+}

@@ -37,7 +37,11 @@ const AddPlayerForm = forwardRef(function AddPlayerForm(props, ref) {
         placeholder="Player name"
         className="add-player__input"
       />
-      <button onClick={handleAddPlayer} className="add-player__btn">
+      <button
+        onClick={handleAddPlayer}
+        disabled={!newPlayerName.trim()}
+        className="add-player__btn"
+      >
         Add Player
       </button>
     </div>
