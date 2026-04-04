@@ -1,0 +1,174 @@
+/* WinnerModal styles - Mobile First */
+
+.winner-modal {
+  border: 3px solid var(--accent-gold);
+  border-radius: 16px;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  padding: 0;
+  width: calc(100% - 32px);
+  max-width: 400px;
+  max-height: calc(100vh - 48px);
+  margin: auto;
+  box-shadow: 0 0 30px rgba(212, 175, 55, 0.3);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.winner-modal::backdrop {
+  background: rgba(0, 0, 0, 0.7);
+}
+
+.winner-modal__confetti {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+}
+
+.winner-modal__content {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  position: relative;
+  overflow-y: auto;
+  flex: 1;
+  min-height: 0;
+}
+
+.winner-modal__close-btn {
+  position: absolute;
+  right: 16px;
+  top: 16px;
+  width: 28px;
+  height: 28px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-tertiary);
+  color: var(--text-secondary);
+  border-radius: 4px;
+  font-size: 1.2rem;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.winner-modal__close-btn:hover {
+  background: var(--border-color);
+  color: var(--text-primary);
+}
+
+.winner-modal__celebration {
+  text-align: center;
+  padding: 16px 0;
+}
+
+.winner-modal__trophy {
+  font-size: 4rem;
+  display: block;
+  margin: 0 auto 12px;
+  animation: bounce 0.6s ease-in-out infinite alternate;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+}
+
+@keyframes bounce {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-10px);
+  }
+}
+
+.winner-modal__title {
+  margin: 0;
+  font-size: 1.8rem;
+  color: var(--accent-gold);
+  text-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
+}
+
+@media (min-width: 480px) {
+  .winner-modal__title {
+    font-size: 2.2rem;
+  }
+}
+
+.winner-modal__score {
+  margin: 8px 0 0;
+  font-size: 1.2rem;
+  color: var(--text-secondary);
+}
+
+.winner-modal__standings {
+  background: var(--bg-tertiary);
+  border-radius: 8px;
+  padding: 16px;
+  max-height: 200px;
+  overflow-y: auto;
+  flex-shrink: 0;
+}
+
+.winner-modal__standings h3 {
+  margin: 0 0 12px;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.winner-modal__list {
+  margin: 0;
+  padding: 0 0 0 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.winner-modal__list li {
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 0;
+}
+
+.winner-modal__list li.winner {
+  color: var(--accent-gold);
+  font-weight: bold;
+}
+
+.winner-modal__list li.winner::marker {
+  color: var(--accent-gold);
+}
+
+.winner-modal__list .name {
+  flex: 1;
+}
+
+.winner-modal__list .score {
+  font-weight: 600;
+}
+
+.winner-modal__new-game-btn {
+  width: 100%;
+  padding: 14px 20px;
+  border: none;
+  border-radius: 8px;
+  background: var(--accent-gold);
+  color: #1a1a1a;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.winner-modal__new-game-btn:hover {
+  opacity: 0.9;
+}

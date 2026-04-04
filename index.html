@@ -1,26 +1,19 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Let&apos;s Farkle</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
   <link rel="icon" type="image/png" sizes="16x16" href="/favicon.ico" />
+  <link rel="apple-touch-icon" href="/icon.png" />
   <link rel="manifest" href="/manifest.json" />
-  <script src="https://code.jquery.com/jquery-4.0.0.min.js" defer></script>
-  <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js" defer></script>
-  <script src="script.js" defer></script>
+  <meta name="theme-color" content="#0d5c2e" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Let's Farkle</title>
 </head>
 
 <body>
-  <h1>Let's Farkle</h1>
-  <p>Click the <i data-feather="user-plus"></i> to add a player</p>
-  <button id="addPlayer"><i data-feather="user-plus"></i></button>
-  <button id="newGame"><i data-feather="refresh-ccw"></i> New Game</button>
-  <div id="scores">
-    <!-- Player scores will be added here -->
-  </div>
+  <div id="root"></div>
+  <script type="module" src="/src/main.jsx"></script>
 </body>
 
 </html>

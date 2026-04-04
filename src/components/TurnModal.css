@@ -1,0 +1,243 @@
+/* TurnModal styles - Mobile First */
+
+.turn-modal {
+  border: 2px solid var(--border-color);
+  border-radius: 12px;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  padding: 0;
+  width: calc(100% - 32px);
+  max-width: 400px;
+  margin: 16px;
+}
+
+.turn-modal::backdrop {
+  background: rgba(0, 0, 0, 0.6);
+}
+
+.turn-modal__content {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+@media (min-width: 480px) {
+  .turn-modal__content {
+    padding: 24px;
+    gap: 20px;
+  }
+}
+
+.turn-modal__header {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.turn-modal__header h2 {
+  margin: 0;
+  font-size: 1.2rem;
+  color: var(--text-primary);
+  text-align: center;
+}
+
+.turn-modal__minimize-btn {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 28px;
+  height: 28px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-tertiary);
+  color: var(--text-secondary);
+  border-radius: 4px;
+  font-size: 1.2rem;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.turn-modal__minimize-btn:hover {
+  background: var(--border-color);
+  color: var(--text-primary);
+}
+
+@media (min-width: 480px) {
+  .turn-modal__header h2 {
+    font-size: 1.4rem;
+  }
+}
+
+.turn-modal__accumulated {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 12px;
+  background: var(--bg-tertiary);
+  border-radius: 8px;
+}
+
+@media (min-width: 480px) {
+  .turn-modal__accumulated {
+    padding: 16px;
+  }
+}
+
+.turn-modal__accumulated .label {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+@media (min-width: 480px) {
+  .turn-modal__accumulated .label {
+    font-size: 0.85rem;
+  }
+}
+
+.turn-modal__accumulated .points {
+  font-size: 2rem;
+  font-weight: bold;
+  color: var(--accent-gold);
+}
+
+@media (min-width: 480px) {
+  .turn-modal__accumulated .points {
+    font-size: 2.5rem;
+  }
+}
+
+.turn-modal__history {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.turn-modal__history .label {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.turn-modal__history .rolls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.turn-modal__history .roll {
+  padding: 4px 10px;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+.turn-modal__input-group {
+  display: flex;
+  gap: 8px;
+}
+
+.turn-modal__input {
+  flex: 1;
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  font-size: 1rem;
+  text-align: center;
+}
+
+@media (min-width: 480px) {
+  .turn-modal__input {
+    font-size: 1.1rem;
+  }
+}
+
+.turn-modal__input:focus {
+  outline: none;
+  border-color: var(--accent-gold);
+}
+
+.turn-modal__add-btn {
+  padding: 12px 16px;
+  border: 1px solid var(--button-border);
+  background: var(--button-bg);
+  color: var(--text-primary);
+  border-radius: 6px;
+  font-size: 1rem;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+@media (min-width: 480px) {
+  .turn-modal__add-btn {
+    padding: 12px 20px;
+  }
+}
+
+.turn-modal__add-btn:hover {
+  background: var(--border-color);
+}
+
+.turn-modal__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+@media (min-width: 480px) {
+  .turn-modal__actions {
+    flex-direction: row;
+    gap: 12px;
+  }
+}
+
+.turn-modal__btn {
+  flex: 1;
+  padding: 14px 16px;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+  white-space: nowrap;
+}
+
+@media (min-width: 480px) {
+  .turn-modal__btn {
+    padding: 14px 20px;
+  }
+}
+
+.turn-modal__btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.turn-modal__btn--bank {
+  background: var(--accent-gold);
+  color: #1a1a1a;
+}
+
+.turn-modal__btn--bank:hover:not(:disabled) {
+  opacity: 0.9;
+}
+
+.turn-modal__btn--farkle {
+  background: #8b2500;
+  color: var(--text-primary);
+}
+
+.turn-modal__btn--farkle:hover {
+  background: #a52a2a;
+}

@@ -1,0 +1,151 @@
+/* Game Styles - Mobile First */
+
+.game {
+  flex: 1;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+}
+
+@media (min-width: 768px) {
+  .game {
+    padding: 24px;
+  }
+}
+
+.game__header {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.game__header h1 {
+  margin: 0;
+  font-size: 2rem;
+  color: var(--text-primary);
+}
+
+@media (min-width: 768px) {
+  .game__header h1 {
+    font-size: 2.5rem;
+  }
+}
+
+.game__players {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+@media (min-width: 768px) {
+  .game__players {
+    gap: 16px;
+  }
+}
+
+/* Add Player Form */
+.add-player {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 140px;
+  padding: 10px;
+  border: 2px dashed var(--border-color);
+  border-radius: 8px;
+  background: transparent;
+  order: 999; /* Visually last, but first in DOM for tab order */
+}
+
+@media (min-width: 480px) {
+  .add-player {
+    min-width: 160px;
+    padding: 12px;
+  }
+}
+
+.add-player__input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  font-size: 0.9rem;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.add-player__input::placeholder {
+  color: var(--text-secondary);
+}
+
+.add-player__input:focus {
+  outline: none;
+  border-color: var(--accent-gold);
+}
+
+.add-player__btn {
+  padding: 8px 12px;
+  border: 1px solid var(--button-border);
+  background: var(--button-bg);
+  color: var(--text-primary);
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.add-player__btn:hover {
+  background: var(--border-color);
+}
+
+/* Footer with New Game button */
+.game__footer {
+  margin-top: auto;
+  padding: 24px 16px;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.new-game-btn {
+  padding: 8px 16px;
+  border: 1px solid #a52a2a;
+  background: #8b2500;
+  color: var(--text-primary);
+  border-radius: 6px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.2s ease;
+}
+
+.new-game-btn:hover {
+  background: #a52a2a;
+  opacity: 1;
+}
+
+.start-game-btn {
+  padding: 12px 24px;
+  border: 2px solid var(--accent-gold);
+  background: linear-gradient(135deg, #1a7a42 0%, #2e8b57 100%);
+  color: var(--text-primary);
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    transform 0.1s ease,
+    box-shadow 0.2s ease;
+}
+
+.start-game-btn:hover {
+  box-shadow: 0 0 15px rgba(212, 175, 55, 0.5);
+}
+
+.start-game-btn:active {
+  transform: scale(0.98);
+}
