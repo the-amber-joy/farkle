@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useGameStore } from "../store/gameStore";
+import ScoringPanel from "./ScoringPanel";
 import "./TurnModal.css";
 
 /**
@@ -7,7 +8,7 @@ import "./TurnModal.css";
  */
 export default function TurnModal() {
   const dialogRef = useRef(null);
-  const inputRef = useRef(null);
+  const scrollRef = useRef(null);
 
   const {
     players,
@@ -19,7 +20,6 @@ export default function TurnModal() {
   } = useGameStore();
 
   const [rollHistory, setRollHistory] = useState([]);
-  const [currentInput, setCurrentInput] = useState("");
   const [lastPlayerIndex, setLastPlayerIndex] = useState(currentPlayerIndex);
 
   const currentPlayer = players[currentPlayerIndex];
@@ -29,7 +29,6 @@ export default function TurnModal() {
   if (lastPlayerIndex !== currentPlayerIndex) {
     setLastPlayerIndex(currentPlayerIndex);
     setRollHistory([]);
-    setCurrentInput("");
   }
 
   // Open/close dialog based on store state
@@ -39,7 +38,8 @@ export default function TurnModal() {
 
     if (isTurnModalOpen) {
       dialog.showModal();
-      inputRef.current?.focus();
+      // Scroll accordion container to top
+      scrollRef.current?.scrollTo(0, 0);
     } else {
       dialog.close();
     }
@@ -58,32 +58,18 @@ export default function TurnModal() {
     closeTurnModal();
   };
 
-  const handleSubmitRoll = () => {
-    const points = parseInt(currentInput, 10);
-    if (!isNaN(points) && points >= 0) {
-      setRollHistory([...rollHistory, points]);
-      setCurrentInput("");
-      inputRef.current?.focus();
-    }
-  };
-
-  const handleKeyDown = (e) => {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      handleSubmitRoll();
-    }
+  const handleScoreOption = (points) => {
+    setRollHistory([...rollHistory, points]);
   };
 
   const handleBank = () => {
     updateScore(currentPlayerIndex, accumulatedPoints);
     setRollHistory([]);
-    setCurrentInput("");
     nextTurn();
   };
 
   const handleFarkle = () => {
     setRollHistory([]);
-    setCurrentInput("");
     nextTurn();
   };
 
@@ -127,42 +113,28 @@ export default function TurnModal() {
           </div>
         )}
 
-        <div className="turn-modal__input-group">
-          <label htmlFor="roll-score-input" className="visually-hidden">
-            Enter roll score
-          </label>
-          <input
-            ref={inputRef}
-            id="roll-score-input"
-            type="number"
-            min="0"
-            value={currentInput}
-            onChange={(e) => setCurrentInput(e.target.value)}
-            onKeyDown={handleKeyDown}
-            placeholder="Enter roll score"
-            className="turn-modal__input"
-          />
-          <button onClick={handleSubmitRoll} className="turn-modal__add-btn">
-            Add
-          </button>
+        <div className="turn-modal__scrollable" ref={scrollRef}>
+          <ScoringPanel key={currentPlayerIndex} onScore={handleScoreOption} />
         </div>
 
-        <div className="turn-modal__actions">
-          <button
-            onClick={handleBank}
-            className="turn-modal__btn turn-modal__btn--bank"
-            disabled={accumulatedPoints === 0}
-          >
-            Bank{" "}
-            {accumulatedPoints > 0 ? accumulatedPoints.toLocaleString() : ""}{" "}
-            Points
-          </button>
-          <button
-            onClick={handleFarkle}
-            className="turn-modal__btn turn-modal__btn--farkle"
-          >
-            Farkle!
-          </button>
+        <div className="turn-modal__footer">
+          <div className="turn-modal__actions">
+            <button
+              onClick={handleBank}
+              className="turn-modal__btn turn-modal__btn--bank"
+              disabled={accumulatedPoints === 0}
+            >
+              Bank{" "}
+              {accumulatedPoints > 0 ? accumulatedPoints.toLocaleString() : ""}{" "}
+              Points
+            </button>
+            <button
+              onClick={handleFarkle}
+              className="turn-modal__btn turn-modal__btn--farkle"
+            >
+              Farkle!
+            </button>
+          </div>
         </div>
       </div>
     </dialog>

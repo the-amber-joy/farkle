@@ -2,14 +2,19 @@
 
 /* Mobile-specific overrides (base styles in modals.css) */
 .turn-modal__content {
+  display: flex;
+  flex-direction: column;
   padding: 16px;
-  gap: 16px;
+  gap: 12px;
+  max-height: 85vh;
+  overflow: hidden;
 }
 
 @media (min-width: 480px) {
   .turn-modal__content {
     padding: 24px;
-    gap: 20px;
+    gap: 16px;
+    max-height: 80vh;
   }
 }
 
@@ -106,6 +111,27 @@
   font-size: 0.9rem;
 }
 
+.turn-modal__scrollable {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  margin: 0 -8px;
+  padding: 0 8px;
+}
+
+.turn-modal__scrollable .scoring-panel {
+  max-height: none;
+}
+
+.turn-modal__footer {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-top: 8px;
+  border-top: 1px solid var(--border-color);
+}
+
 .turn-modal__input-group {
   display: flex;
   gap: 8px;
@@ -159,7 +185,6 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
-  margin-top: 8px;
 }
 
 @media (min-width: 480px) {
