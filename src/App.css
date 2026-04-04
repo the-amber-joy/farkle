@@ -113,19 +113,17 @@
 
 .new-game-btn {
   padding: 8px 16px;
-  border: 1px solid #a52a2a;
-  background: #8b2500;
+  border: 1px solid #c9302c;
+  background: #a94442;
   color: var(--text-primary);
   border-radius: 6px;
   font-size: 0.85rem;
   cursor: pointer;
-  opacity: 0.7;
-  transition: opacity 0.2s ease;
+  transition: background 0.2s ease;
 }
 
 .new-game-btn:hover {
-  background: #a52a2a;
-  opacity: 1;
+  background: #c9302c;
 }
 
 .start-game-btn {
