@@ -13,6 +13,11 @@ export const useGameStore = create(
       hasTurnStarted: false,
       winnerIndex: null,
       isWinnerModalOpen: false,
+      fontIndex: 0,
+
+      // Cycle to next font (easter egg)
+      cycleFont: () =>
+        set((state) => ({ fontIndex: (state.fontIndex + 1) % 4 })),
 
       // Add a new player to the game
       addPlayer: (name) =>
@@ -87,6 +92,7 @@ export const useGameStore = create(
         currentPlayerIndex: state.currentPlayerIndex,
         isGameStarted: state.isGameStarted,
         winnerIndex: state.winnerIndex,
+        fontIndex: state.fontIndex,
       }),
     },
   ),

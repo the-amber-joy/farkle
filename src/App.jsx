@@ -19,6 +19,8 @@ function Game() {
     winnerIndex,
     isGameStarted,
     startGame,
+    fontIndex,
+    cycleFont,
   } = useGameStore();
   const addPlayerFormRef = useRef(null);
 
@@ -29,7 +31,6 @@ function Game() {
     "'Luckiest Guy', cursive",
     "'Bungee', cursive",
   ];
-  const [fontIndex, setFontIndex] = useState(0);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
 
   const handleStartGame = () => {
@@ -61,7 +62,7 @@ function Game() {
       <header className="game__header">
         <h1
           style={{ fontFamily: FONTS[fontIndex], cursor: "pointer" }}
-          onClick={() => setFontIndex((i) => (i + 1) % FONTS.length)}
+          onClick={cycleFont}
         >
           Let's Farkle
         </h1>
