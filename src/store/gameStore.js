@@ -22,7 +22,7 @@ export const useGameStore = create(
       // Add a new player to the game
       addPlayer: (name) =>
         set((state) => ({
-          players: [...state.players, { name, score: 0 }],
+          players: [...state.players, { name, score: 0, rolls: 0 }],
         })),
 
       // Start the game (no more adding players)
@@ -67,6 +67,16 @@ export const useGameStore = create(
       // Open/close the turn modal
       openTurnModal: () => set({ isTurnModalOpen: true, hasTurnStarted: true }),
       closeTurnModal: () => set({ isTurnModalOpen: false }),
+
+      // Increment roll count for current player (resets accordion state)
+      incrementRolls: () =>
+        set((state) => ({
+          players: state.players.map((player, i) =>
+            i === state.currentPlayerIndex
+              ? { ...player, rolls: player.rolls + 1 }
+              : player,
+          ),
+        })),
 
       // Winner modal controls
       openWinnerModal: () => set({ isWinnerModalOpen: true }),

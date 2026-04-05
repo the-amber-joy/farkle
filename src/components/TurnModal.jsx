@@ -17,6 +17,7 @@ export default function TurnModal() {
     closeTurnModal,
     updateScore,
     nextTurn,
+    incrementRolls,
   } = useGameStore();
 
   const [rollHistory, setRollHistory] = useState([]);
@@ -60,6 +61,7 @@ export default function TurnModal() {
 
   const handleScoreOption = (points) => {
     setRollHistory([...rollHistory, points]);
+    incrementRolls();
   };
 
   const handleBank = () => {
@@ -114,7 +116,10 @@ export default function TurnModal() {
         )}
 
         <div className="turn-modal__scrollable" ref={scrollRef}>
-          <ScoringPanel key={currentPlayerIndex} onScore={handleScoreOption} />
+          <ScoringPanel
+            key={`${currentPlayer.name}-${currentPlayer.rolls}`}
+            onScore={handleScoreOption}
+          />
         </div>
 
         <div className="turn-modal__footer">

@@ -1,23 +1,14 @@
 /**
  * Farkle scoring constants and configurations
- * Unicode dice faces: ⚀ = 1, ⚁ = 2, ⚂ = 3, ⚃ = 4, ⚄ = 5, ⚅ = 6
+ * Dice faces are represented as arrays of numbers (1-6)
  */
 
-// Map die face value to Unicode character
-export const DICE_FACES = {
-  1: "⚀",
-  2: "⚁",
-  3: "⚂",
-  4: "⚃",
-  5: "⚄",
-  6: "⚅",
-};
-
-// Helper to create dice display string
-const dice = (face, count) => DICE_FACES[face].repeat(count);
+// Helper to create array of dice faces
+const dice = (face, count) => Array(count).fill(face);
 
 /**
  * All scoring combinations grouped by category
+ * dice: array of face values to display
  */
 export const SCORING_OPTIONS = {
   singles: {
@@ -76,19 +67,19 @@ export const SCORING_OPTIONS = {
     options: [
       {
         id: "three-pairs",
-        dice: `${dice(1, 2)} ${dice(2, 2)} ${dice(3, 2)}`,
+        dice: [1, 1, 2, 2, 3, 3],
         label: "Three Pairs",
         points: 750,
       },
       {
         id: "straight",
-        dice: `${DICE_FACES[1]}${DICE_FACES[2]}${DICE_FACES[3]}${DICE_FACES[4]}${DICE_FACES[5]}${DICE_FACES[6]}`,
+        dice: [1, 2, 3, 4, 5, 6],
         label: "Straight",
         points: 1000,
       },
       {
         id: "two-triples",
-        dice: `${dice(1, 3)} ${dice(2, 3)}`,
+        dice: [1, 1, 1, 2, 2, 2],
         label: "Two Triples",
         points: 2500,
       },

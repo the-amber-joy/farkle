@@ -1,0 +1,16 @@
+.dice-icon {
+  width: 1.5rem;
+  height: 1.5rem;
+  display: inline-block;
+  vertical-align: middle;
+  /* Invert black SVGs for dark theme */
+  filter: invert(1);
+}
+
+.dice-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.125rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
