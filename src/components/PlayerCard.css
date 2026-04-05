@@ -47,6 +47,7 @@
   font-size: inherit;
   line-height: 1;
   vertical-align: middle;
+  -webkit-tap-highlight-color: transparent;
 }
 
 @keyframes pulse {

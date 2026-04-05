@@ -40,6 +40,7 @@
   background: none;
   border: none;
   padding: 0;
+  -webkit-tap-highlight-color: transparent;
 }
 
 @keyframes bounce {
