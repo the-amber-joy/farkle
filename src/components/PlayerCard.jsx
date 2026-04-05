@@ -133,6 +133,8 @@ export default function PlayerCard({ name, score, isActive, isWinner }) {
   const handleCardClick = () => {
     if (winnerIndex !== null && !isWinner) {
       launchSadConfetti();
+    } else if (winnerIndex !== null && isWinner) {
+      launchConfetti();
     }
   };
 
@@ -171,14 +173,9 @@ export default function PlayerCard({ name, score, isActive, isWinner }) {
       >
         <h3 className="player-name">
           {isWinner && (
-            <button
-              className="winner-trophy"
-              onClick={launchConfetti}
-              title="Click for confetti!"
-              aria-label="Celebrate with confetti"
-            >
+            <span role="img" aria-label="trophy">
               🏆
-            </button>
+            </span>
           )}
           {name}
         </h3>
