@@ -147,3 +147,40 @@
 .winner-btn:active {
   transform: scale(0.98);
 }
+
+.loser-encouragement-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  pointer-events: none;
+  display: grid;
+  place-items: center;
+  width: 96vw;
+  margin: 0 auto;
+  text-align: center;
+  color: #fff7c7;
+  text-shadow:
+    0 2px 0 rgba(0, 0, 0, 0.8),
+    0 0 18px rgba(0, 0, 0, 0.6);
+  font-family: "Bungee", "Luckiest Guy", sans-serif;
+  font-size: clamp(1.8rem, 6.5vw, 5.2rem);
+  line-height: 1.1;
+  letter-spacing: 0.02em;
+  opacity: 0;
+  animation: encouragementOverlaySequence 3s ease-in-out forwards;
+}
+
+@keyframes encouragementOverlaySequence {
+  0% {
+    opacity: 0;
+  }
+  33.33% {
+    opacity: 1;
+  }
+  66.67% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
