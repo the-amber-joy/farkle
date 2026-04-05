@@ -23,7 +23,6 @@ function Game() {
     fontIndex,
     cycleFont,
     openSettingsModal,
-    isSettingsModalOpen,
   } = useGameStore();
   const addPlayerFormRef = useRef(null);
   const [settingsOpenCount, setSettingsOpenCount] = useState(0);
