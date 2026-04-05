@@ -98,7 +98,7 @@ function Game() {
         </button>
       )}
 
-      {isGameStarted && (
+      {isGameStarted && winnerIndex === null && (
         <button
           onClick={() => {
             setSettingsOpenCount((c) => c + 1);

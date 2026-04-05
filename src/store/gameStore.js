@@ -10,6 +10,7 @@ export const useGameStore = create(
       currentPlayerIndex: 0,
       isGameStarted: false,
       isTurnModalOpen: false,
+      turnModalOpenCount: 0,
       hasTurnStarted: false,
       winnerIndex: null,
       isWinnerModalOpen: false,
@@ -66,7 +67,12 @@ export const useGameStore = create(
       setCurrentPlayer: (index) => set({ currentPlayerIndex: index }),
 
       // Open/close the turn modal
-      openTurnModal: () => set({ isTurnModalOpen: true, hasTurnStarted: true }),
+      openTurnModal: () =>
+        set((state) => ({
+          isTurnModalOpen: true,
+          hasTurnStarted: true,
+          turnModalOpenCount: state.turnModalOpenCount + 1,
+        })),
       closeTurnModal: () => set({ isTurnModalOpen: false }),
 
       // Increment roll count for current player (resets accordion state)
@@ -114,6 +120,7 @@ export const useGameStore = create(
           currentPlayerIndex: 0,
           isGameStarted: false,
           isTurnModalOpen: false,
+          turnModalOpenCount: 0,
           hasTurnStarted: false,
           winnerIndex: null,
           isWinnerModalOpen: false,

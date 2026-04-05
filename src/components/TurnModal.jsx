@@ -14,6 +14,7 @@ export default function TurnModal() {
     players,
     currentPlayerIndex,
     isTurnModalOpen,
+    turnModalOpenCount,
     closeTurnModal,
     updateScore,
     nextTurn,
@@ -116,10 +117,7 @@ export default function TurnModal() {
         )}
 
         <div className="turn-modal__scrollable" ref={scrollRef}>
-          <ScoringPanel
-            key={`${currentPlayer.name}-${currentPlayer.rolls}`}
-            onScore={handleScoreOption}
-          />
+          <ScoringPanel key={turnModalOpenCount} onScore={handleScoreOption} />
         </div>
 
         <div className="turn-modal__footer">
