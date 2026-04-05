@@ -132,6 +132,36 @@
   right: 24px;
 }
 
+.settings-fab {
+  position: fixed;
+  bottom: 24px;
+  left: 24px;
+  padding: 12px;
+  border-radius: 50%;
+  background: #22c55e;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  transition:
+    background 0.2s,
+    transform 0.2s;
+  z-index: 100;
+}
+
+.settings-fab:hover {
+  background: #16a34a;
+  transform: scale(1.05);
+}
+
+.settings-fab svg {
+  width: 20px;
+  height: 20px;
+  fill: white;
+}
+
 .start-game-fab {
   margin: 24px auto 16px;
 }

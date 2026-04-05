@@ -1,0 +1,177 @@
+/* SettingsModal styles */
+
+.settings-modal {
+  max-width: 450px;
+}
+
+.settings-modal__content {
+  padding: 20px;
+  gap: 16px;
+}
+
+.settings-modal__header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.settings-modal__header h2 {
+  margin: 0;
+  font-size: 1.3rem;
+  color: var(--text-primary);
+}
+
+.settings-modal .modal-close-btn {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.settings-modal__players h3 {
+  margin: 0 0 12px 0;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.settings-modal__list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.settings-modal__player {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.settings-modal__input {
+  flex: 1;
+  min-width: 0;
+  padding: 10px 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  font-size: 1rem;
+  font-family: inherit;
+}
+
+.settings-modal__input:focus {
+  outline: none;
+  border-color: var(--accent-gold);
+}
+
+.settings-modal__input::placeholder {
+  color: var(--text-secondary);
+}
+
+.settings-modal__score {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  min-width: 60px;
+  text-align: right;
+}
+
+.settings-modal__remove-btn {
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background: var(--bg-tertiary);
+  color: var(--text-secondary);
+  font-size: 1.2rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.15s ease;
+}
+
+.settings-modal__remove-btn:hover {
+  background: #8b2500;
+  border-color: #8b2500;
+  color: white;
+}
+
+.settings-modal__add {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border-color);
+}
+
+.settings-modal__add-btn {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 6px;
+  background: var(--accent-gold);
+  color: #1a1a1a;
+  font-size: 0.9rem;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: opacity 0.15s ease;
+}
+
+.settings-modal__add-btn:hover:not(:disabled) {
+  opacity: 0.9;
+}
+
+.settings-modal__add-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.settings-modal__actions {
+  display: flex;
+  gap: 12px;
+  padding-top: 8px;
+}
+
+.settings-modal__btn {
+  flex: 1;
+  padding: 12px 16px;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.settings-modal__btn--cancel {
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+}
+
+.settings-modal__btn--cancel:hover {
+  background: var(--border-color);
+}
+
+.settings-modal__btn--save {
+  background: var(--accent-gold);
+  color: #1a1a1a;
+}
+
+.settings-modal__btn--save:hover:not(:disabled) {
+  opacity: 0.9;
+}
+
+.settings-modal__btn--save:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

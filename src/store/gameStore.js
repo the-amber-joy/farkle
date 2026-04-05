@@ -13,6 +13,7 @@ export const useGameStore = create(
       hasTurnStarted: false,
       winnerIndex: null,
       isWinnerModalOpen: false,
+      isSettingsModalOpen: false,
       fontIndex: 0,
 
       // Cycle to next font (easter egg)
@@ -82,6 +83,30 @@ export const useGameStore = create(
       openWinnerModal: () => set({ isWinnerModalOpen: true }),
       closeWinnerModal: () => set({ isWinnerModalOpen: false }),
 
+      // Settings modal controls
+      openSettingsModal: () => set({ isSettingsModalOpen: true }),
+      closeSettingsModal: () => set({ isSettingsModalOpen: false }),
+
+      // Update players list (from settings modal)
+      updatePlayers: (newPlayers, removedCurrentPlayer = false) => {
+        const state = get();
+        let newCurrentIndex = state.currentPlayerIndex;
+
+        // If current player was removed, adjust index
+        if (removedCurrentPlayer) {
+          newCurrentIndex = state.currentPlayerIndex % newPlayers.length;
+        } else if (state.currentPlayerIndex >= newPlayers.length) {
+          // Current index is out of bounds
+          newCurrentIndex = newPlayers.length - 1;
+        }
+
+        set({
+          players: newPlayers,
+          currentPlayerIndex: newCurrentIndex,
+          isSettingsModalOpen: false,
+        });
+      },
+
       // Reset the game
       resetGame: () =>
         set({
@@ -92,6 +117,7 @@ export const useGameStore = create(
           hasTurnStarted: false,
           winnerIndex: null,
           isWinnerModalOpen: false,
+          isSettingsModalOpen: false,
         }),
     }),
     {
