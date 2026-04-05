@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import "./App.css";
 import AddPlayerForm from "./components/AddPlayerForm";
 import ConfirmDialog from "./components/ConfirmDialog";
@@ -24,6 +24,7 @@ function Game() {
     cycleFont,
     openSettingsModal,
   } = useGameStore();
+  const gameRef = useRef(null);
   const addPlayerFormRef = useRef(null);
   const [settingsOpenCount, setSettingsOpenCount] = useState(0);
 
@@ -51,8 +52,66 @@ function Game() {
     setTimeout(() => addPlayerFormRef.current?.focus(), 0);
   };
 
+  // In standalone PWA mode there is no browser chrome to receive focus after
+  // the last tabbable element, so we loop focus within the app to match the
+  // behaviour users expect from a native app.
+  useEffect(() => {
+    const isPWA = window.matchMedia("(display-mode: standalone)").matches;
+    if (!isPWA) {
+      return undefined;
+    }
+
+    const handleKeyDown = (event) => {
+      if (event.key !== "Tab") {
+        return;
+      }
+
+      if (document.querySelector("dialog[open]")) {
+        return;
+      }
+
+      const game = gameRef.current;
+      if (!game) {
+        return;
+      }
+
+      const tabbable = Array.from(
+        game.querySelectorAll(
+          'button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), a[href], [tabindex]:not([tabindex="-1"])',
+        ),
+      ).filter(
+        (el) =>
+          !el.hasAttribute("hidden") &&
+          el.getAttribute("aria-hidden") !== "true" &&
+          el.closest("dialog:not([open])") === null &&
+          el.getClientRects().length > 0,
+      );
+
+      if (tabbable.length < 2) {
+        return;
+      }
+
+      const first = tabbable[0];
+      const last = tabbable[tabbable.length - 1];
+
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, []);
+
   return (
-    <div className="game">
+    <div className="game" ref={gameRef}>
       {/* Preload fonts to prevent FOUT */}
       <div aria-hidden="true" style={{ position: "absolute", left: "-9999px" }}>
         {FONTS.map((font) => (
@@ -70,6 +129,12 @@ function Game() {
           Let's Farkle
         </h1>
       </header>
+
+      {isGameStarted && (
+        <button onClick={handleNewGame} className="new-game-fab">
+          <span aria-hidden="true">↻</span> Start Over
+        </button>
+      )}
 
       <section className="game__players">
         {/* Add Player comes first in DOM for tab order, CSS reorders visually */}
@@ -89,12 +154,6 @@ function Game() {
       {!isGameStarted && players.length >= 1 && (
         <button onClick={handleStartGame} className="start-game-fab">
           <span aria-hidden="true">▶</span> Start Game
-        </button>
-      )}
-
-      {isGameStarted && (
-        <button onClick={handleNewGame} className="new-game-fab">
-          <span aria-hidden="true">↻</span> Start Over
         </button>
       )}
 

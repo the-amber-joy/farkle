@@ -138,6 +138,19 @@ export default function PlayerCard({ name, score, isActive, isWinner }) {
     }
   };
 
+  const isLoserCardInteractive = winnerIndex !== null && !isWinner;
+
+  const handleCardKeyDown = (event) => {
+    if (!isLoserCardInteractive) {
+      return;
+    }
+
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      handleCardClick();
+    }
+  };
+
   const cardClasses = [
     "player-card",
     isActive && "player-card--active",
@@ -160,15 +173,18 @@ export default function PlayerCard({ name, score, isActive, isWinner }) {
 
       <div
         className={cardClasses}
-        onClick={handleCardClick}
-        style={
-          winnerIndex !== null && !isWinner ? { cursor: "pointer" } : undefined
-        }
+        onClick={isLoserCardInteractive ? handleCardClick : undefined}
+        onKeyDown={isLoserCardInteractive ? handleCardKeyDown : undefined}
+        role={isLoserCardInteractive ? "button" : undefined}
+        tabIndex={isLoserCardInteractive ? 0 : undefined}
+        style={isLoserCardInteractive ? { cursor: "pointer" } : undefined}
         aria-current={isActive ? "true" : undefined}
         aria-label={
           isWinner
             ? `${name}, winner with ${score.toLocaleString()} points`
-            : undefined
+            : isLoserCardInteractive
+              ? `${name}, ${score.toLocaleString()} points. Press Enter or Space for an encouragement message.`
+              : undefined
         }
       >
         <h3 className="player-name">

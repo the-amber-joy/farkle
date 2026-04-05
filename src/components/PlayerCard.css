@@ -36,6 +36,11 @@
   box-shadow: 0 0 20px rgba(212, 175, 55, 0.5);
 }
 
+.player-card[role="button"]:focus-visible {
+  outline: 3px solid var(--accent-gold);
+  outline-offset: 3px;
+}
+
 .winner-trophy {
   display: inline-block;
   margin-right: 6px;
