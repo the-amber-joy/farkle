@@ -29,9 +29,9 @@ function Game() {
 
   // Easter egg: clicking title cycles fonts
   const FONTS = [
+    "'Luckiest Guy', cursive",
     "'Bangers', cursive",
     "'Fredoka', sans-serif",
-    "'Luckiest Guy', cursive",
     "'Bungee', cursive",
   ];
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
