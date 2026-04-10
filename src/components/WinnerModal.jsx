@@ -24,18 +24,14 @@ export default function WinnerModal() {
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
 
   const launchConfetti = () => {
-    // Create a fresh confetti instance each time to avoid stale canvas issues
     if (!canvasRef.current) return;
 
-    // Reset any existing instance
-    if (confettiRef.current) {
-      confettiRef.current.reset();
+    if (!confettiRef.current) {
+      confettiRef.current = confetti.create(canvasRef.current, {
+        resize: true,
+        useWorker: false, // Disable worker to avoid async issues
+      });
     }
-
-    confettiRef.current = confetti.create(canvasRef.current, {
-      resize: true,
-      useWorker: false, // Disable worker to avoid async issues
-    });
 
     const myConfetti = confettiRef.current;
     const dieShape = confetti.shapeFromText({ text: "🎲", scalar: 2 });

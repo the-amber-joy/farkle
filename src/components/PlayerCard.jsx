@@ -77,7 +77,7 @@ export default function PlayerCard({ name, score, isActive, isWinner }) {
   };
 
   const launchSadConfetti = () => {
-    const sadEmojis = ["😢", "😭", "💔", "😿", "🥺"];
+    const sadEmojis = ["😢", "😭", "💔", "😿", "🥺", "😞"];
     const encouragements = getLoserEncouragements(name);
     const randomLine =
       encouragements[Math.floor(Math.random() * encouragements.length)];
@@ -92,10 +92,10 @@ export default function PlayerCard({ name, score, isActive, isWinner }) {
     overlayTimeoutRef.current = setTimeout(() => {
       setOverlayText("");
       overlayTimeoutRef.current = null;
-    }, 3000);
+    }, 5000);
 
     // Snow effect with sad emojis
-    const duration = 3000;
+    const duration = 5000;
     const end = Date.now() + duration;
 
     const frame = () => {

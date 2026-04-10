@@ -172,17 +172,17 @@
   line-height: 1.1;
   letter-spacing: 0.02em;
   opacity: 0;
-  animation: encouragementOverlaySequence 3s ease-in-out forwards;
+  animation: encouragementOverlaySequence 5s ease-in-out forwards;
 }
 
 @keyframes encouragementOverlaySequence {
   0% {
     opacity: 0;
   }
-  33.33% {
+  20% {
     opacity: 1;
   }
-  66.67% {
+  80% {
     opacity: 1;
   }
   100% {
