@@ -1,8 +1,10 @@
 import confetti from "canvas-confetti";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { getLoserEncouragements } from "../constants/encouragements";
 import { useGameStore } from "../store/gameStore";
 import "./PlayerCard.css";
+
+const CLEAR_ENCOURAGEMENT_EVENT = "farkle:clear-encouragement-overlay";
 
 /**
  * PlayerCard - Displays a single player's score card
@@ -17,6 +19,25 @@ export default function PlayerCard({ name, score, isActive, isWinner }) {
   const [overlayKey, setOverlayKey] = useState(0);
   const overlayTimeoutRef = useRef(null);
 
+  useEffect(() => {
+    const clearOverlay = () => {
+      if (overlayTimeoutRef.current) {
+        clearTimeout(overlayTimeoutRef.current);
+        overlayTimeoutRef.current = null;
+      }
+      setOverlayText("");
+    };
+
+    window.addEventListener(CLEAR_ENCOURAGEMENT_EVENT, clearOverlay);
+
+    return () => {
+      window.removeEventListener(CLEAR_ENCOURAGEMENT_EVENT, clearOverlay);
+      if (overlayTimeoutRef.current) {
+        clearTimeout(overlayTimeoutRef.current);
+      }
+    };
+  }, []);
+
   const {
     openTurnModal,
     hasTurnStarted,
@@ -25,6 +46,10 @@ export default function PlayerCard({ name, score, isActive, isWinner }) {
     openWinnerModal,
     isGameStarted,
   } = useGameStore();
+
+  const broadcastClearEncouragement = () => {
+    window.dispatchEvent(new Event(CLEAR_ENCOURAGEMENT_EVENT));
+  };
 
   // Determine button text
   const getButtonText = () => {
@@ -89,6 +114,8 @@ export default function PlayerCard({ name, score, isActive, isWinner }) {
   };
 
   const handleCardClick = () => {
+    broadcastClearEncouragement();
+
     if (winnerIndex !== null && !isWinner) {
       launchSadConfetti();
     }
@@ -129,6 +156,7 @@ export default function PlayerCard({ name, score, isActive, isWinner }) {
 
       <div
         className={cardClasses}
+        onPointerDown={broadcastClearEncouragement}
         onClick={isLoserCardInteractive ? handleCardClick : undefined}
         onKeyDown={isLoserCardInteractive ? handleCardKeyDown : undefined}
         role={isLoserCardInteractive ? "button" : undefined}
