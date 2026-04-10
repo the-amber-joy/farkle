@@ -34,7 +34,7 @@ export default function WinnerModal() {
     }
 
     const myConfetti = confettiRef.current;
-    const dieShape = confetti.shapeFromText({ text: "🎲", scalar: 2 });
+    const dieShape = confetti.shapeFromText({ text: "🎲", scalar: 5 });
     const colors = ["#d4af37", "#ffd700", "#f5f5dc", "#b8860b", "#daa520"];
 
     // Initial burst
@@ -49,11 +49,11 @@ export default function WinnerModal() {
     // Dice burst
     myConfetti({
       disableForReducedMotion: true,
-      particleCount: 15,
-      spread: 120,
+      particleCount: 6,
+      spread: 40,
       origin: { y: 1 },
       shapes: [dieShape],
-      scalar: 2,
+      scalar: 5,
       flat: true,
     });
 

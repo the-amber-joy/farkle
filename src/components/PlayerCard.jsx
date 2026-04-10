@@ -34,48 +34,6 @@ export default function PlayerCard({ name, score, isActive, isWinner }) {
     return "Roll!";
   };
 
-  const launchConfetti = () => {
-    const dieShape = confetti.shapeFromText({ text: "🎲", scalar: 2 });
-    const colors = ["#d4af37", "#ffd700", "#f5f5dc", "#b8860b", "#daa520"];
-
-    confetti({
-      disableForReducedMotion: true,
-      particleCount: 100,
-      spread: 70,
-      origin: { y: 1 },
-      colors,
-    });
-
-    confetti({
-      disableForReducedMotion: true,
-      particleCount: 15,
-      spread: 60,
-      origin: { y: 1 },
-      shapes: [dieShape],
-      scalar: 2,
-      flat: true,
-    });
-
-    setTimeout(() => {
-      confetti({
-        disableForReducedMotion: true,
-        particleCount: 50,
-        angle: 60,
-        spread: 55,
-        origin: { x: 0, y: 1 },
-        colors,
-      });
-      confetti({
-        disableForReducedMotion: true,
-        particleCount: 50,
-        angle: 120,
-        spread: 55,
-        origin: { x: 1, y: 1 },
-        colors,
-      });
-    }, 250);
-  };
-
   const launchSadConfetti = () => {
     const sadEmojis = ["😢", "😭", "💔", "😿", "🥺", "😞"];
     const encouragements = getLoserEncouragements(name);
@@ -133,8 +91,6 @@ export default function PlayerCard({ name, score, isActive, isWinner }) {
   const handleCardClick = () => {
     if (winnerIndex !== null && !isWinner) {
       launchSadConfetti();
-    } else if (winnerIndex !== null && isWinner) {
-      launchConfetti();
     }
   };
 
