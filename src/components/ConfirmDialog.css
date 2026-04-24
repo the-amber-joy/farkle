@@ -2,10 +2,12 @@
 
 /* Confirm-specific overrides (base styles in modals.css) */
 .confirm-dialog {
+  --modal-safe-offset: 24px;
   max-width: 360px;
 }
 
 .confirm-dialog__content {
+  --modal-content-safe-bottom: 24px;
   gap: 16px;
 }
 

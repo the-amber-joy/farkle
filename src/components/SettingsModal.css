@@ -1,10 +1,12 @@
 /* SettingsModal styles */
 
 .settings-modal {
+  --modal-safe-offset: 24px;
   max-width: 450px;
 }
 
 .settings-modal__content {
+  --modal-content-safe-bottom: 20px;
   padding: 20px;
   gap: 16px;
 }

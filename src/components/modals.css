@@ -1,7 +1,19 @@
 /* Shared Modal Styles */
 
+/*
+  Shared modal utility knobs:
+  --modal-safe-offset: outer viewport inset used by .modal-base
+  --modal-content-safe-bottom: minimum bottom padding used by .modal-content-safe-bottom
+  --modal-content-max-vh: content height percentage used by .modal-content-safe-viewport
+*/
+
 /* Base dialog styles */
 .modal-base {
+  --modal-safe-offset: 24px;
+  --modal-content-safe-bottom: 24px;
+  --modal-content-max-vh: 100;
+
+  box-sizing: border-box;
   border: 2px solid var(--border-color);
   border-radius: 12px;
   background: var(--bg-secondary);
@@ -9,6 +21,22 @@
   padding: 0;
   width: calc(100% - 32px);
   max-width: 400px;
+  max-height: calc(
+    100vh - var(--modal-safe-offset) - env(safe-area-inset-top) -
+      env(safe-area-inset-bottom)
+  );
+  max-height: calc(
+    100svh - var(--modal-safe-offset) - env(safe-area-inset-top) -
+      env(safe-area-inset-bottom)
+  );
+  max-height: calc(
+    100dvh - var(--modal-safe-offset) - env(safe-area-inset-top) -
+      env(safe-area-inset-bottom)
+  );
+  max-height: calc(
+    100% - var(--modal-safe-offset) - env(safe-area-inset-top) -
+      env(safe-area-inset-bottom)
+  );
   margin: auto;
 }
 
@@ -22,6 +50,30 @@
   display: flex;
   flex-direction: column;
   gap: 20px;
+}
+
+/* Shared safe-area padding for modal content */
+.modal-content-safe-bottom {
+  padding-bottom: max(
+    var(--modal-content-safe-bottom),
+    env(safe-area-inset-bottom)
+  );
+}
+
+/* Shared iOS-safe viewport sizing for scrollable modal content */
+.modal-content-safe-viewport {
+  max-height: calc(
+    var(--modal-content-max-vh) * 1vh - env(safe-area-inset-top) -
+      env(safe-area-inset-bottom)
+  );
+  max-height: calc(
+    var(--modal-content-max-vh) * 1svh - env(safe-area-inset-top) -
+      env(safe-area-inset-bottom)
+  );
+  max-height: calc(
+    var(--modal-content-max-vh) * 1dvh - env(safe-area-inset-top) -
+      env(safe-area-inset-bottom)
+  );
 }
 
 /* Close/minimize button */

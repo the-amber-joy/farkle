@@ -50,7 +50,7 @@ export default function ConfirmDialog({
       onCancel={handleCancel}
       aria-labelledby="confirm-dialog-title"
     >
-      <div className="modal-content confirm-dialog__content">
+      <div className="modal-content modal-content-safe-bottom confirm-dialog__content">
         <h2 id="confirm-dialog-title">{title}</h2>
         <p>{message}</p>
         <div className="confirm-dialog__actions">
