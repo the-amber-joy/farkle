@@ -45,7 +45,7 @@ export default function ConfirmDialog({
   return (
     <dialog
       ref={dialogRef}
-      className="modal-base modal-safe-viewport confirm-dialog"
+      className="modal-base confirm-dialog"
       onClick={handleDialogClick}
       onCancel={handleCancel}
       aria-labelledby="confirm-dialog-title"

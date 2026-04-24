@@ -2,7 +2,7 @@
 
 /*
   Shared modal utility knobs:
-  --modal-safe-offset: outer viewport inset used by .modal-safe-viewport
+  --modal-safe-offset: outer viewport inset used by .modal-base
   --modal-content-safe-bottom: minimum bottom padding used by .modal-content-safe-bottom
   --modal-content-max-vh: content height percentage used by .modal-content-safe-viewport
 */
@@ -20,11 +20,6 @@
   padding: 0;
   width: calc(100% - 32px);
   max-width: 400px;
-  margin: auto;
-}
-
-/* Shared iOS-safe viewport sizing for dialogs */
-.modal-safe-viewport {
   max-height: calc(
     100vh - var(--modal-safe-offset) - env(safe-area-inset-top) -
       env(safe-area-inset-bottom)
@@ -37,6 +32,7 @@
     100dvh - var(--modal-safe-offset) - env(safe-area-inset-top) -
       env(safe-area-inset-bottom)
   );
+  margin: auto;
 }
 
 .modal-base::backdrop {

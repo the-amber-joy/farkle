@@ -118,7 +118,7 @@ export default function SettingsModal() {
     <>
       <dialog
         ref={dialogRef}
-        className="modal-base modal-safe-viewport settings-modal"
+        className="modal-base settings-modal"
         onClick={handleDialogClick}
         onCancel={handleCancel}
         aria-labelledby="settings-modal-title"

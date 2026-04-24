@@ -124,7 +124,7 @@ export default function WinnerModal() {
     <>
       <dialog
         ref={dialogRef}
-        className="modal-base modal-safe-viewport winner-modal"
+        className="modal-base winner-modal"
         onClick={handleDialogClick}
         aria-labelledby="winner-modal-title"
       >
