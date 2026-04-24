@@ -27,7 +27,7 @@ jobs:
         run: npm ci
 
       - name: Build preview
-        run: npm run build -- --base /farkle/previews/pr-${{ github.event.pull_request.number }}/
+        run: npm run build -- --base /previews/pr-${{ github.event.pull_request.number }}/
 
       - name: Publish preview to gh-pages
         uses: peaceiris/actions-gh-pages@v4

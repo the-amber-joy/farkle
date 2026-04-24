@@ -27,7 +27,7 @@ jobs:
         run: npm ci
 
       - name: Build main site
-        run: npm run build -- --base /farkle/
+        run: npm run build -- --base /
 
       - name: Publish main site to gh-pages
         uses: peaceiris/actions-gh-pages@v4
