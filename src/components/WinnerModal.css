@@ -7,7 +7,8 @@
   border-radius: 16px;
   box-shadow: 0 0 30px rgba(212, 175, 55, 0.3);
   position: relative;
-  overflow: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
 }
 
 .winner-modal[open] {
@@ -25,6 +26,7 @@
   overflow-y: auto;
   flex: 1;
   min-height: 0;
+  -webkit-overflow-scrolling: touch;
 }
 
 .winner-modal__celebration {

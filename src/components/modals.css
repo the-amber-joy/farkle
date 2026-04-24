@@ -13,6 +13,7 @@
   --modal-content-safe-bottom: 24px;
   --modal-content-max-vh: 100;
 
+  box-sizing: border-box;
   border: 2px solid var(--border-color);
   border-radius: 12px;
   background: var(--bg-secondary);
@@ -30,6 +31,10 @@
   );
   max-height: calc(
     100dvh - var(--modal-safe-offset) - env(safe-area-inset-top) -
+      env(safe-area-inset-bottom)
+  );
+  max-height: calc(
+    100% - var(--modal-safe-offset) - env(safe-area-inset-top) -
       env(safe-area-inset-bottom)
   );
   margin: auto;
