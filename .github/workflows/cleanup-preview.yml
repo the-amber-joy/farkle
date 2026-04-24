@@ -2,18 +2,19 @@ name: Cleanup PR Preview
 
 on:
   pull_request:
-    types: [closed]
+    types: [ closed ]
 
 permissions:
   contents: write
 
 jobs:
   cleanup-preview:
-    if: ${{ github.event.pull_request.merged == true && github.event.pull_request.head.repo.full_name == github.repository }}
+    if: ${{ github.event.pull_request.merged == true &&
+      github.event.pull_request.head.repo.full_name == github.repository }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout gh-pages branch
-        uses: actions/checkout@v6
+        uses: actions/checkout@v6.0.2
         with:
           ref: gh-pages
 
