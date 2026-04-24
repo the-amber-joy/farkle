@@ -86,7 +86,7 @@ export default function TurnModal() {
       onCancel={handleCancel}
       aria-labelledby="turn-modal-title"
     >
-      <div className="modal-content turn-modal__content">
+      <div className="modal-content modal-content-safe-bottom modal-content-safe-viewport turn-modal__content">
         <header className="turn-modal__header">
           <h2 id="turn-modal-title">{currentPlayer.name}'s Turn</h2>
           <button

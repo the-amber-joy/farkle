@@ -118,12 +118,12 @@ export default function SettingsModal() {
     <>
       <dialog
         ref={dialogRef}
-        className="modal-base settings-modal"
+        className="modal-base modal-safe-viewport settings-modal"
         onClick={handleDialogClick}
         onCancel={handleCancel}
         aria-labelledby="settings-modal-title"
       >
-        <div className="modal-content settings-modal__content">
+        <div className="modal-content modal-content-safe-bottom settings-modal__content">
           <header className="settings-modal__header">
             <h2 id="settings-modal-title">Settings</h2>
             <button
