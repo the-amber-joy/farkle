@@ -7,13 +7,11 @@
   border-radius: 16px;
   box-shadow: 0 0 30px rgba(212, 175, 55, 0.3);
   position: relative;
-  overflow-y: auto;
-  overscroll-behavior: contain;
+  overflow: hidden;
 }
 
 .winner-modal[open] {
-  display: flex;
-  flex-direction: column;
+  display: block;
 }
 
 .winner-modal::backdrop {
@@ -22,16 +20,17 @@
 
 .winner-modal__content {
   --modal-content-safe-bottom: 24px;
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr) auto;
+  gap: 16px;
   position: relative;
-  overflow-y: auto;
-  flex: 1;
-  min-height: 0;
-  -webkit-overflow-scrolling: touch;
+  overflow: hidden;
+  min-height: min-content;
 }
 
 .winner-modal__celebration {
   text-align: center;
-  padding: 16px 0;
+  padding: 8px 0;
 }
 
 .winner-modal__trophy {
@@ -78,9 +77,12 @@
   background: var(--bg-tertiary);
   border-radius: 8px;
   padding: 16px;
-  max-height: 200px;
+  min-height: 0;
+  max-height: min(240px, 34vh);
+  max-height: min(240px, 34svh);
+  max-height: min(240px, 34dvh);
   overflow-y: auto;
-  flex-shrink: 0;
+  -webkit-overflow-scrolling: touch;
 }
 
 .winner-modal__standings h3 {
@@ -146,4 +148,19 @@
   height: 100vh;
   pointer-events: none;
   z-index: 10;
+}
+
+@media (max-height: 760px) {
+  .winner-modal__trophy {
+    font-size: 3.2rem;
+    margin-bottom: 8px;
+  }
+
+  .winner-modal__title {
+    font-size: 1.5rem;
+  }
+
+  .winner-modal__standings {
+    padding: 12px;
+  }
 }
