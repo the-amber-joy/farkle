@@ -1,0 +1,18 @@
+{
+  "theme_color": "#0d5c2e",
+  "background_color": "#0d5c2e",
+  "display": "standalone",
+  "scope": "/",
+  "start_url": "/",
+  "name": "Let's Farkle",
+  "short_name": "Let's Farkle",
+  "description": "Let's Farkle",
+  "icons": [
+    {
+      "src": "/icon.png",
+      "sizes": "any",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
