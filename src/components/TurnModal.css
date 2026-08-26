@@ -113,6 +113,7 @@
   border: 1px solid var(--border-color);
   border-radius: 4px;
   font-size: 0.9rem;
+  color: var(--text-primary);
 }
 
 .turn-modal__scrollable {
@@ -238,3 +239,4 @@
 .turn-modal__btn--farkle:hover {
   background: #a52a2a;
 }
+
