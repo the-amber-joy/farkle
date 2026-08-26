@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useGameStore } from "../store/gameStore";
+import ConfirmDialog from "./ConfirmDialog";
 import ScoringPanel from "./ScoringPanel";
 import "./TurnModal.css";
 
@@ -26,6 +27,9 @@ export default function TurnModal() {
 
   const currentPlayer = players[currentPlayerIndex];
   const accumulatedPoints = rollHistory.reduce((sum, roll) => sum + roll, 0);
+
+  const [showRemovePoints, setShowRemovePoints] = useState(false);
+  const [removeIndex, setRemoveIndex] = useState(null);
 
   // Reset local state when player changes
   if (lastPlayerIndex !== currentPlayerIndex) {
@@ -65,6 +69,11 @@ export default function TurnModal() {
     incrementRolls();
   };
 
+  const handleConfirmRemovePoints = () => {
+    setRollHistory(rollHistory.filter((_, i) => i !== removeIndex));
+    setShowRemovePoints(false);
+  };
+
   const handleBank = () => {
     updateScore(currentPlayerIndex, accumulatedPoints);
     setRollHistory([]);
@@ -79,67 +88,92 @@ export default function TurnModal() {
   if (!currentPlayer) return null;
 
   return (
-    <dialog
-      ref={dialogRef}
-      className="modal-base turn-modal"
-      onClick={handleDialogClick}
-      onCancel={handleCancel}
-      aria-labelledby="turn-modal-title"
-    >
-      <div className="modal-content modal-content-safe-bottom modal-content-safe-viewport turn-modal__content">
-        <header className="turn-modal__header">
-          <h2 id="turn-modal-title">{currentPlayer.name}'s Turn</h2>
-          <button
-            onClick={closeTurnModal}
-            className="modal-close-btn"
-            aria-label="Minimize"
-          >
-            −
-          </button>
-        </header>
+    <>
+      <dialog
+        ref={dialogRef}
+        className="modal-base turn-modal"
+        onClick={handleDialogClick}
+        onCancel={handleCancel}
+        aria-labelledby="turn-modal-title"
+      >
+        <div className="modal-content modal-content-safe-bottom modal-content-safe-viewport turn-modal__content">
+          <header className="turn-modal__header">
+            <h2 id="turn-modal-title">{currentPlayer.name}'s Turn</h2>
+            <button
+              onClick={closeTurnModal}
+              className="modal-close-btn"
+              aria-label="Minimize"
+            >
+              −
+            </button>
+          </header>
 
-        <div className="turn-modal__accumulated">
-          <span className="label">Accumulated Points</span>
-          <span className="points">{accumulatedPoints.toLocaleString()}</span>
-        </div>
+          <div className="turn-modal__accumulated">
+            <span className="label">Accumulated Points</span>
+            <span className="points">{accumulatedPoints.toLocaleString()}</span>
+          </div>
 
-        {rollHistory.length > 0 && (
-          <div className="turn-modal__history">
-            <span className="label">Rolls this turn:</span>
-            <div className="rolls">
-              {rollHistory.map((roll, i) => (
-                <span key={i} className="roll">
-                  {roll}
-                </span>
-              ))}
+          {rollHistory.length > 0 && (
+            <div className="turn-modal__history">
+              <span className="label">Rolls this turn:</span>
+              <div className="rolls">
+                {rollHistory.map((roll, i) => (
+                  <button
+                    key={i}
+                    className="roll"
+                    onClick={() => {
+                      setShowRemovePoints(true);
+                      setRemoveIndex(i);
+                    }}
+                  >
+                    {roll}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          <div className="turn-modal__scrollable" ref={scrollRef}>
+            <ScoringPanel
+              key={turnModalOpenCount}
+              onScore={handleScoreOption}
+            />
+          </div>
+
+          <div className="turn-modal__footer">
+            <div className="turn-modal__actions">
+              <button
+                onClick={handleBank}
+                className="turn-modal__btn turn-modal__btn--bank"
+                disabled={accumulatedPoints === 0}
+              >
+                Bank{" "}
+                {accumulatedPoints > 0
+                  ? accumulatedPoints.toLocaleString()
+                  : ""}{" "}
+                Points
+              </button>
+              <button
+                onClick={handleFarkle}
+                className="turn-modal__btn turn-modal__btn--farkle"
+              >
+                Farkle!
+              </button>
             </div>
           </div>
-        )}
-
-        <div className="turn-modal__scrollable" ref={scrollRef}>
-          <ScoringPanel key={turnModalOpenCount} onScore={handleScoreOption} />
         </div>
+      </dialog>
 
-        <div className="turn-modal__footer">
-          <div className="turn-modal__actions">
-            <button
-              onClick={handleBank}
-              className="turn-modal__btn turn-modal__btn--bank"
-              disabled={accumulatedPoints === 0}
-            >
-              Bank{" "}
-              {accumulatedPoints > 0 ? accumulatedPoints.toLocaleString() : ""}{" "}
-              Points
-            </button>
-            <button
-              onClick={handleFarkle}
-              className="turn-modal__btn turn-modal__btn--farkle"
-            >
-              Farkle!
-            </button>
-          </div>
-        </div>
-      </div>
-    </dialog>
+      <ConfirmDialog
+        isOpen={showRemovePoints}
+        title={`Delete ${rollHistory[removeIndex]?.toString()} points?`}
+        message={`Removing the selected roll will clear ${rollHistory[removeIndex]?.toString()} points from this turn. This action cannot be undone.`}
+        confirmText="Delete"
+        cancelText="Cancel"
+        onConfirm={handleConfirmRemovePoints}
+        onCancel={() => setShowRemovePoints(false)}
+        danger
+      />
+    </>
   );
 }
