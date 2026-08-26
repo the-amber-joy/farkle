@@ -68,6 +68,7 @@ body {
   background-color: var(--bg-primary);
   color: var(--text-primary);
   font-family: "Georgia", serif;
+  overscroll-behavior-y: contain;
 }
 
 #root {
